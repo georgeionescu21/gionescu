@@ -1,0 +1,50 @@
+Release the full power of the mongo shell with Studio 3T
+
+<br/>
+
+<style type="text/css">
+   a {
+     display: block;
+     color: #47B648;
+   }
+   .text-primary {
+     font-size: 18px;
+    color: #47B648;
+   }
+   p {
+    font-size: 14px;
+   }
+   .button {
+     font-size: 16px;
+     font-weight: bold;
+   }
+</style>  
+
+<p class="text-primary">Write MongoDB queries faster with IntelliShell, Studio 3T's built-in mongo shell.</p>
+<p>IntelliShell autocompletes:</p>
+<ul>
+  <li>
+    <p>JavaScript standard library functions</p>
+  </li>
+  <li>
+    <p>shell-specific types and methods</p>
+  </li>
+  <li>
+    <p>operators</p>
+  </li>
+<li>
+    <p>collection names</p>
+  </li>
+<li>
+    <p>field names</p>
+  </li>
+<li>
+    <p>shell helper commands... and more</p>
+  </li>
+</ul>
+<p>In addition to robust autocompletion, enjoy other features like code reformatting, commenting and uncommenting, opening and saving queries, just to name a few. </p>
+
+<h3>Need a more powerful GUI? Try Robo 3T's sibling, Studio 3T:</h3><br/>
+
+<a class="button" href="https://studio3t.com/download/?utm_source=intellishell&utm_medium=welcomepage&utm_campaign=inapp-robo3t">Download Studio 3T</a>
+

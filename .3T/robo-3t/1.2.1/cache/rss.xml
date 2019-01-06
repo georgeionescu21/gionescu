@@ -1,0 +1,1810 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Robo 3T]]></title><description><![CDATA[Thoughts, stories and ideas.]]></description><link>https://blog.robomongo.org/</link><generator>Ghost 0.11</generator><lastBuildDate>Fri, 04 Jan 2019 15:42:35 GMT</lastBuildDate><atom:link href="https://blog.robomongo.org/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Robo 3T 1.2 is released]]></title><description><![CDATA[<p>We are very happy to announce the release of Robo 3T 1.2! In this release we have focused mostly on solving some popular issues. However, we still have some improvements. One major improvement is Qt version upgrade from 5.7.0 to 5.9.3 for better program stability,</p>]]></description><link>https://blog.robomongo.org/robo-3t-1-2/</link><guid isPermaLink="false">1c8c5ad7-4a7c-493c-a4b8-a9f9f87ad931</guid><dc:creator><![CDATA[Gokhan Simsek]]></dc:creator><pubDate>Mon, 19 Feb 2018 14:58:28 GMT</pubDate><media:content url="https://blog.robomongo.org/content/images/2018/02/robo-not-white-edited.jpg" medium="image"/><content:encoded><![CDATA[<img src="https://blog.robomongo.org/content/images/2018/02/robo-not-white-edited.jpg" alt="Robo 3T 1.2 is released"><p>We are very happy to announce the release of Robo 3T 1.2! In this release we have focused mostly on solving some popular issues. However, we still have some improvements. One major improvement is Qt version upgrade from 5.7.0 to 5.9.3 for better program stability, UI experience and Hi-DPI support. All of the changes can be seen below in "Table of Contents":</p>
+
+<h3 id="tableofcontents">Table of Contents</h3>
+
+<p><a href="https://blog.robomongo.org/robo-3t-1-2/#a"><strong>Bug Fixes</strong></a> <br>
+&ensp;&ensp;1. <a href="https://blog.robomongo.org/robo-3t-1-2/#a1">Big double numbers are showing incorrectly</a> (<a href="https://github.com/Studio3T/robomongo/issues/1447">#1447</a>) <br>
+&ensp;&ensp;2. <a href="https://blog.robomongo.org/robo-3t-1-2/#a2">Aggregate query results are not pagaeble</a> (<a href="https://github.com/Studio3T/robomongo/issues/1058">#1058</a>) <br>
+&ensp;&ensp;3. <a href="https://blog.robomongo.org/robo-3t-1-2/#a3">Editing a projected document causes data override/loss</a> (<a href="https://github.com/Studio3T/robomongo/issues/881">#881</a>) <br>
+&ensp;&ensp;4. <a href="https://blog.robomongo.org/robo-3t-1-2/#a4">Error when starting up SSH session</a> (<a href="https://github.com/Studio3T/robomongo/issues/1189#issuecomment-353279070">#1189</a>) <br>
+&ensp;&ensp;5. <a href="https://blog.robomongo.org/robo-3t-1-2/#a5">Robo 3T 1.1 fails to start on Ubuntu 17.XX</a> (<a href="https://github.com/Studio3T/robomongo/issues/1385">#1385</a>) <br>
+&ensp;&ensp;6. <a href="https://blog.robomongo.org/robo-3t-1-2/#a6">Robo 3T is not opening on MacOS High Sierra</a> (<a href="https://github.com/Studio3T/robomongo/issues/1412#issuecomment-353276002">#1412</a>) <br>
+&ensp;&ensp;7. <a href="https://blog.robomongo.org/robo-3t-1-2/#a7">Cannot load list of indexes</a> (<a href="https://github.com/Studio3T/robomongo/issues/1454">#1454</a>)</p>
+
+<p><a href="https://blog.robomongo.org/robo-3t-1-2/#b"><strong>Improvements:</strong></a> <br>
+&ensp;&ensp;1. <a href="https://blog.robomongo.org/robo-3t-1-2/#b1">Qt version upgraded from Qt 5.7.0 to Qt 5.9.3</a> <br>
+&ensp;&ensp;2. <a href="https://blog.robomongo.org/robo-3t-1-2/#b2">Auto switch from HTTPS to HTTP feature</a> <br>
+&ensp;&ensp;3. <a href="https://blog.robomongo.org/robo-3t-1-2/#b3">Robo 3T is not buildable on latest MacOS High Sierra</a></p>
+
+<hr>
+
+<p><a name="a"></a>  </p>
+
+<h2 id="bugfixes">Bug Fixes</h2>
+
+<p><a name="a1"></a>  </p>
+
+<h3 id="1bigdoublenumbersareshowingincorrectly1447httpsgithubcomstudio3trobomongoissues1447">1. Big double numbers are showing incorrectly (<a href="https://github.com/Studio3T/robomongo/issues/1447">#1447</a>)</h3>
+
+<p>Wit this version, we have some fixes for some representation problems of big double numbers and some enhancements for better usability of them. </p>
+
+<p>Let's start with a quick presentation of one of the problematic case and how it was fixed, then continue with more examples and details. </p>
+
+<p>Below, we see the problem where users were unable to save the document due to trailing '.0' characters in scientific notation of big double numbers.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2018/02/double-all-v6.png" alt="Robo 3T 1.2 is released"></p>
+
+<p>In general, our goal was to represent and behave exactly like mongo shell does. With this in mind, we tried to achieve this goal as much as possible with the following changes:</p>
+
+<ul>
+<li>Fix: Disabled trailing zeros for scientific format  </li>
+<li>Enhancement: For better usability, frequently used e+15 and e+16 values are shown in non-scientific format. (Note: Similarly, in mongo shell, from e+15 to e+20 values are shown non-scientific format, we wanted to behave exactly this way but could not due to some conversion problems)</li>
+<li>Fix: '-inf' was shown incorrectly as 'Infinity' in text mode  </li>
+<li>Fix: 'Infinity/-Infinity' are now always shown as 'Infinity/-Infinity'. (The problem before was 'Infinity' was shown 'inf' in table mode and 'Infinity' in text mode.)</li>
+</ul>
+
+<p>A short comparison of problematic (on the left) and fixed (on the right) cases with examples:</p>
+
+<pre><code>Robo 3T 1.1 (before)                Robo 3T 1.2 (after)  
+-----------------------------       -------------------------
+"e14": 150512101156575.0,           "e14": 150512101156575.0,    
+"e15": 1.50512101156575e+15.0,      "e15": 1505121011565750.0,
+"e16": 1.50512101156575e+16.0,      "e16": 15051210115657500.0,
+"e17": 1.50512101156575e+17.0       "e17": 1.50512101156575e+17
+"e18": 1.50512101156575e+18.0       "e17": 1.50512101156575e+18
+"inf": inf                          "inf": Infinity
+"inf_": -inf                        "inf_": -Infinity
+</code></pre>
+
+<p><strong>Finally</strong>, let's see how these values are shown in mongo shell:</p>
+
+<pre><code>&gt; db.getCollection('double').find({}).pretty()
+{
+        "e14" : 150512101156575,
+        "e15" : 1505121011565750,
+        "e16" : 15051210115657500,
+        "e17" : 150512101156575000,
+        "e18" : 1505121011565750000,
+        "inf" : Infinity,
+        "inf_" : -Infinity,
+}
+</code></pre>
+
+<hr>
+
+<p><a name="a2"></a>  </p>
+
+<h4 id="2aggregatequeryresultsarenotpagaeble1058httpsgithubcomstudio3trobomongoissues1058">2.  Aggregate query results are not pagaeble (<a href="https://github.com/Studio3T/robomongo/issues/1058">#1058</a>)</h4>
+
+<p>The problem here was that aggregate query results were shown without paging bar (skip and batch fields). As a result it was not possible to page through the results. </p>
+
+<p>The problematic case and the fix are shown below:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2018/02/agg-all-v5.png" alt="Robo 3T 1.2 is released"></p>
+
+<hr>
+
+<p><a name="a3"></a>  </p>
+
+<h4 id="3editingaprojecteddocumentcausesdataoverrideloss881httpsgithubcomstudio3trobomongoissues881">3. Editing a projected document causes data override/loss (<a href="https://github.com/Studio3T/robomongo/issues/881">#881</a>)</h4>
+
+<p><img src="https://blog.robomongo.org/content/images/2018/02/proj-all-5.png" alt="Robo 3T 1.2 is released"></p>
+
+<p><a name="a4"></a>  </p>
+
+<h4 id="4ssherrorwhenstartingupsshsession1189httpsgithubcomstudio3trobomongoissues1189issuecomment353354032">4. SSH: Error when starting up SSH session (<a href="https://github.com/Studio3T/robomongo/issues/1189#issuecomment-353354032">#1189</a>)</h4>
+
+<p>This problem has kept us busy for a long time. The biggest challenge here was, we tried many different setups and configurations, but still we were unable to reproduce this issue in our systems. </p>
+
+<p>We attempted to fix this problem with a small code change and decided to include this change in a Beta to let the users test. Fortunately, we have <strong>'mostly'</strong> positive results. (See results: <a href="https://github.com/Studio3T/robomongo/issues/1189#issuecomment-353354032">issues/1189#issuecomment-353354032</a>)</p>
+
+<p>Users who have this problem, mostly report errors in the format <code>Error: Resource temporarily unavailable ...</code>, two examples seen below:</p>
+
+<pre><code>Error: Resource temporarily unavailable. No supported authentication methods found. (Error #35)  
+</code></pre>
+
+<pre><code>Error: Resource temporarily unavailable. Error when starting up SSH session: -8. (Error #35)  
+</code></pre>
+
+<p><strong>Details</strong> <br>
+Also, this fix seems to be fixing SSH errors for systems which have this error in their SSH server logs: <br>
+  <code>kex protocol error: type 30 seq 1 [preauth]</code></p>
+
+<p><strong>Alternative Solution</strong> <br>
+In the link below, an alternative workaround solution can be seen submitted by one of our users: <br>
+ <a href="https://github.com/Studio3T/robomongo/issues/1125#issuecomment-323303611">issues/1125#issuecomment-323303611</a></p>
+
+<hr>
+
+<p><a name="a5"></a>  </p>
+
+<h3 id="5robo3t11failstostartonubuntu17xx1385httpsgithubcomstudio3trobomongoissues1385">5. Robo 3T 1.1 fails to start on Ubuntu 17.XX (<a href="https://github.com/Studio3T/robomongo/issues/1385">#1385</a>)</h3>
+
+<pre><code>~/robo3t$ bin/robo3t 
+This application failed to start because it could not find or load the Qt platform plugin "xcb"  
+in "".  
+Available platform plugins are: xcb.  
+...
+</code></pre>
+
+<p>Users have started to have this problem mostly on Ubuntu 17.04 which was an Ubuntu development release at the time of Robo 3T 1.1 release. <br>
+(<strong>Note</strong>: Later on, Ubuntu 17.xx release download link has been removed on official Ubuntu download page due to some security issues. Currently, the download links seems to be back again.)</p>
+
+<p>With Robo 3T 1.2 (after Qt version upgrade to 5.9.3), this issue seems to be fixed. </p>
+
+<p><strong>Workaround Solution:</strong> <br>
+Luckily, we also had a relatively simple workaround solution which was to delete (or move) <code>robo3t-1.1.1-linux-x86_64-c93c6b0/lib/libstdc++*</code> file: </p>
+
+<pre><code>rm robo3t-1.1.1-linux-x86_64-c93c6b0/lib/libstdc++*  
+</code></pre>
+
+<p>Details: <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1385#issuecomment-310014331">issues/1385#issuecomment-310014331</a></p>
+
+<p><strong>Note:</strong> We were unable to reproduce this issue, that's why we released an unofficial Robo 3T 1.2 Beta in order to make sure this issue is fixed.  (See results: <a href="https://github.com/Studio3T/robomongo/issues/1385#issuecomment-353275110">issues/1385#issuecomment-353275110</a>)</p>
+
+<hr>
+
+<p><a name="a6"></a>  </p>
+
+<h3 id="6robo3tisnotopeningonmacoshighsierra1412httpsgithubcomstudio3trobomongoissues1412issuecomment353276002">6. Robo 3T is not opening on MacOS High Sierra (<a href="https://github.com/Studio3T/robomongo/issues/1412#issuecomment-353276002">#1412</a>)</h3>
+
+<p>This issue was started be seen on MacOS High Sierra where users were unable to open/start Robo 3T program. </p>
+
+<p>In order to solve this problem, we have upgraded our Qt version from 5.7.0 to Qt 5.9.3 and included a crash prevention change in our code with Robo 3T 1.2.</p>
+
+<p>These changes were also included in version 1.2 Beta since we were unable to reproduce these crashes in our systems. For this issue also, we have mostly positive results. (See results: <a href="https://github.com/Studio3T/robomongo/issues/1412#issuecomment-353276002">issues/1412#issuecomment-353276002</a>)</p>
+
+<hr>
+
+<p><a name="a7"></a>  </p>
+
+<h4 id="7cannotloadlistofindexesproblem1454httpsgithubcomstudio3trobomongoissues1454">7. Cannot load list of indexes problem (<a href="https://github.com/Studio3T/robomongo/issues/1454">#1454</a>)</h4>
+
+<p>This problem was seen when the index <code>options</code> document has unexpected values, such as <code>"background" : 1</code> or <code>"sparse" : 0</code> instead of correct values <code>"background" : true</code> or <code>"sparse" : false</code>.</p>
+
+<p>Index document as an example below:</p>
+
+<pre><code>    {
+        "v" : 1,
+        "unique" : true,
+        "key" : {
+            "services.OS.id" : 1
+        },
+        "name" : "services.OS.id_1",
+        "ns" : "OS.users",
+        "sparse" : 1 // should be 'true' not 1
+    }
+</code></pre>
+
+<p>In this case, Robo 3T was unable to show/load indexes. After this fix, indexes were visible. </p>
+
+<p>Both the problem and the solution can seen below:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2018/01/1-all-v1.png" width="700" alt="Robo 3T 1.2 is released">    </p>
+
+<p><strong>Reference:</strong> <br>
+db.collection.createIndex: <br>
+<a href="https://docs.mongodb.com/manual/reference/method/db.collection.createIndex">https://docs.mongodb.com/manual/reference/method/db.collection.createIndex</a></p>
+
+<hr>
+
+<p><a name="b"></a>  </p>
+
+<h2 id="improvements">Improvements:</h2>
+
+<p><a name="b1"></a>  </p>
+
+<h4 id="1qtversionupgradedfromqt570toqt593">1. Qt version upgraded from Qt 5.7.0 to Qt 5.9.3</h4>
+
+<p>We have upgraded Qt version from 5.7.0 (15-Jun-2016) to 5.9.3 (21-Nov-2017). Main reasons for this upgrade were to fix crashes and build problems for MacOS High Sierra.</p>
+
+<hr>
+
+<p><a name="b2"></a> </p>
+
+<h4 id="2autoswitchfromhttpstohttpfeature">2. Auto switch from HTTPS to HTTP feature</h4>
+
+<p>The reason to add this feature was some low level HTTPS related crashes mostly seen on Linux systems. With this feature, Robo 3T switches to HTTP in the next program start, after it detects HTTPS caused program abnormal exit/crash. </p>
+
+<p>This feature is designed to be used for Welcome Tab where the data being exchanged is not user/critical data.</p>
+
+<p><strong>Note:</strong> 
+It is also possible to manually enable/disable this flag in config file.</p>
+
+<p>robo-3t.json:  </p>
+
+<pre><code>...
+ "useHttps" : false,
+...
+</code></pre>
+
+<hr>
+
+<p><a name="b3"></a> </p>
+
+<h4 id="3robo3tisnotbuildableonlatestmacoshighsierra">3. Robo 3T is not buildable on latest MacOS High Sierra</h4>
+
+<p>In order to solve this problem, we had to upgrade Qt version from 5.7.0 to .5.9.3 and also apply a QScintilla patch (<code>QScintilla-2.9.3-xcode8.patch</code>). </p>
+
+<p>After these changes, Robo 3T could be built on MacOS High Sierra.</p>
+
+<p><a name="Download"></a>  </p>
+
+<h2 id="download">Download</h2>
+
+<p>Download <a href="https://robomongo.org/download">Robo 3T 1.2</a>, our best version of Robo 3T.</p>
+
+<p>Enjoy!</p>
+
+<p><a href="https://robomongo.org/download"><img width="400" src="https://blog.robomongo.org/content/images/2018/02/robomongo-121-v2.png" alt="Robo 3T 1.2 is released"></a></p>
+
+<p>Follow us on Twitter (<a href="https://twitter.com/robomongo">@robomongo</a>) to be notified about future releases. Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub</a>. </p>]]></content:encoded></item><item><title><![CDATA[Robomongo is now Robo 3T, with MongoDB 3.4 support]]></title><description><![CDATA[<p>We are very happy to announce the release of Robo 3T 1.1 with MongoDB 3.4 Support! In this release we have some fundamental changes, improvements and fixes. </p>
+
+<p>One important change worth to mention is that we changed our name from Robomongo to Robo 3T because of trademark reasons</p>]]></description><link>https://blog.robomongo.org/robomongo-is-robo-3t/</link><guid isPermaLink="false">727ff6aa-d507-40d0-821d-147295bb4ebc</guid><dc:creator><![CDATA[Gokhan Simsek]]></dc:creator><pubDate>Wed, 14 Jun 2017 17:10:58 GMT</pubDate><media:content url="https://blog.robomongo.org/content/images/2017/06/cover5.jpg" medium="image"/><content:encoded><![CDATA[<img src="https://blog.robomongo.org/content/images/2017/06/cover5.jpg" alt="Robomongo is now Robo 3T, with MongoDB 3.4 support"><p>We are very happy to announce the release of Robo 3T 1.1 with MongoDB 3.4 Support! In this release we have some fundamental changes, improvements and fixes. </p>
+
+<p>One important change worth to mention is that we changed our name from Robomongo to Robo 3T because of trademark reasons (more details about this topic can be seen in section <a href="https://blog.robomongo.org/robomongo-is-robo-3t/#5">Renaming from Robomongo to Robo 3T</a>). </p>
+
+<hr>
+
+<h3 id="tableofcontents">Table of Contents</h3>
+
+<ol>
+<li><a href="https://blog.robomongo.org/robomongo-is-robo-3t/#1">MongoDB 3.4 Support</a>  </li>
+<li><a href="https://blog.robomongo.org/robomongo-is-robo-3t/#2">New Data Type: NumberDecimal (Decimal128) Support</a>  </li>
+<li><a href="https://blog.robomongo.org/robomongo-is-robo-3t/#3">ECMAScript 2015 aka ES6 Support (Modernized JavaScript Implementation)</a>  </li>
+<li><a href="https://blog.robomongo.org/robomongo-is-robo-3t/#4">Improvements &amp; Bug Fixes</a> <br>
+ a. <a href="https://blog.robomongo.org/robomongo-is-robo-3t/#4a">Fix for Robo 3T Shell Timeout Issue</a> <br>
+ b. <a href="https://blog.robomongo.org/robomongo-is-robo-3t/#4b">Stability Improvement: Fix for a crash on MACOS Sierra</a> <br>
+ c. <a href="https://blog.robomongo.org/robomongo-is-robo-3t/#4c">Security Improvement: OpenSSL version upgrade</a> <br>
+ d. <a href="https://blog.robomongo.org/robomongo-is-robo-3t/#4d">Tool Chain Improvements: Modern C++14 features are enabled</a>  </li>
+<li><a href="https://blog.robomongo.org/robomongo-is-robo-3t/#5">Renaming from Robomongo to Robo 3T</a>  </li>
+<li><a href="https://blog.robomongo.org/robomongo-is-robo-3t/#centos">CentOS Compatibility Problem</a>  </li>
+<li><a href="https://blog.robomongo.org/robomongo-is-robo-3t/#Download">Download Robo 3T 1.1 </a></li>
+</ol>
+
+<hr>
+
+<p><a name="1"></a>  </p>
+
+<h2 id="1mongodb34support">1. MongoDB 3.4 Support</h2>
+
+<p>Since the latest version of MongoDB version 3.4 released, we were very eager to support this new MongoDB version as soon as possible. After being busy developing and releasing some critical features like SSL and Replica Sets, finally with this version Robo 3T also supports MongoDB 3.4.</p>
+
+<p>Some key features in MongoDB 3.4 are linearizable read concerns, views, collation and new data type NumberDecimal (Decimal128).</p>
+
+<p>A quick word about new data type NumberDecimal (Decimal128), it is added to represent 128-bit decimal-based floating-point values capable of emulating decimal rounding with exact precision. This functionality is intended for applications that handle monetary data, such as financial, tax, and scientific computations. (More about this topic can be seen in section 2 in this blog)</p>
+
+<p>Some major evolution in capabilities and enhancements in MongoDB 3.4 are "native graph computation, faceted navigation, rich real-time analytics, geo-distributed MongoDB zones, elastic clustering".</p>
+
+<p><strong>Finally</strong>, some words about "Free Mongo DB 3.4 Cluster by Mongo Atlas". By the time of writing this blog post, MongoDB offers free, easily configurable and usable 3.4 cluster at <a href="https://www.mongodb.com/cloud/atlas">Mongo Atlas</a> web site.</p>
+
+<p>Example MongoDB 3.4 cluster view on Mongo Atlas web site: </p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/06/atlas_web_v1-a.jpg" alt="Robomongo is now Robo 3T, with MongoDB 3.4 support"></p>
+
+<p>Example MongoDB 3.4 cluster view on Robo 3T:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2017/06/atlas_conn_v1.png" alt="Robomongo is now Robo 3T, with MongoDB 3.4 support"></p>
+
+<p><strong>More info about MongoDB 3.4:</strong> <br>
+<a href="https://docs.mongodb.com/manual/release-notes/3.4/">https://docs.mongodb.com/manual/release-notes/3.4/</a> <br>
+<a href="https://www.mongodb.com/collateral/mongodb-3-4-whats-new">https://www.mongodb.com/collateral/mongodb-3-4-whats-new</a></p>
+
+<hr>
+
+<p><a name="2"></a>  </p>
+
+<h2 id="2newdatatypenumberdecimaldecimal128support">2. New Data Type: NumberDecimal (Decimal128) Support</h2>
+
+<p>NumberDecimal (Decimal128) is added as new data type in MongoDB 3.4. </p>
+
+<p>Normally, mongo shell (and Robo 3T shell) treats all numbers as 64-bit floating-point double values by default. <code>NumberDecimal("")</code> constructor is now usable to explicitly specify 128-bit decimal-based floating-point values capable of emulating decimal rounding with exact precision. This functionality is intended for applications that handle monetary data, such as financial, tax, and scientific computations.</p>
+
+<p>The decimal BSON type uses the IEEE 754 decimal128 floating-point numbering format which supports 34 decimal digits (i.e. significant digits) and an exponent range of -6143 to +6144.</p>
+
+<p><strong>Examples of Usage:</strong>   </p>
+
+<p>The <code>NumberDecimal("")</code> constructor accepts the decimal value as a <strong>string</strong>:</p>
+
+<pre><code>db.getCollection('Bills').insert({ "Jan": NumberDecimal("1000.55") })  
+</code></pre>
+
+<p>The value is stored in the database as follows:  </p>
+
+<pre><code>NumberDecimal("1000.55")  
+</code></pre>
+
+<p><strong>Warning:</strong> The <code>NumberDecimal()</code> constructor also accepts double values (i.e. without quotes), although this is not recommended due to the risk of losing precision.</p>
+
+<p>Showing not recommended usage and result: <br>
+<code>NumberDecimal(1000.55)</code></p>
+
+<p>The value is stored (with losing precision) in the database as follows: <br>
+<code>NumberDecimal("1000.55000000000")</code></p>
+
+<p><strong>Finally</strong>, let's see how this new type looks like on Robo 3T, showing a collection with documents having objects with NumberDecimal (Decimal128) type values:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2017/06/deciman_v3.png" alt="Robomongo is now Robo 3T, with MongoDB 3.4 support"></p>
+
+<p>Note that, <code>Edit Document</code> dialog shows <code>NumberDecimal("...")</code> with quotes as suggested usage by MongoDB.</p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2017/06/dec_edit_doc_orig.png" alt="Robomongo is now Robo 3T, with MongoDB 3.4 support"></p>
+
+<p><strong>Sources:</strong> <br>
+<a href="https://docs.mongodb.com/manual/core/shell-types/">https://docs.mongodb.com/manual/core/shell-types/</a> <br>
+<a href="https://docs.mongodb.com/manual/reference/bson-types/">https://docs.mongodb.com/manual/reference/bson-types/</a></p>
+
+<hr>
+
+<p><a name="3"></a>  </p>
+
+<h2 id="3ecmascript2015akaes6modernizedjavascriptimplementationsupport">3. ECMAScript 2015 aka ES6 (Modernized JavaScript Implementation) Support</h2>
+
+<p>In MongoDB 3.2, the javascript engine used for both the mongo shell and for server-side javascript in mongod changed from V8 to SpiderMonkey. SpiderMonkey brought increased support for features defined in officially known as ECMAScript 2015 (aka 6th edition of ECMAScript, abbreviated as ES6).</p>
+
+<p>Within this release, we have also added support for ECMAScript 2015 in Robo 3T shell.</p>
+
+<p>Let's see some of the ECMAScript 2015 features with examples:</p>
+
+<h5 id="iarrowfunctions">i. Arrow Functions</h5>
+
+<p>Arrow functions are a great addition to the JavaScript language. They make for short and concise code. </p>
+
+<pre><code>// With ECMAScript 2015: Arrow Functions
+db.Bills.find({}).limit(3).map( doc =&gt; doc._id );
+
+// Before ECMAScript 2015
+db.Bills.find({}).limit(3).map( function(doc) {  
+    return doc._id; 
+});
+
+// Output:
+[
+    ObjectId("59228b0574d828afae4876cd"),
+    ObjectId("59228b0574d828afae4876ce"),
+    ObjectId("59228b0574d828afae4876cf")
+]
+</code></pre>
+
+<h5 id="iicomputedpropertynames">ii. Computed Property Names</h5>
+
+<p>Before ECMAScript 2015, computed property names such as <code>[month + '20']</code> was causing the whole script to fail and give error. In this release they are usable. A simple practical example can be seen below:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2017/06/com_prop_all_v3.png" alt="Robomongo is now Robo 3T, with MongoDB 3.4 support"></p>
+
+<p><strong>Two more new features</strong>, "Default Values for Function Parameters" and "Two new ways of declaring variables: 'let' and 'const'" can be seen in our wiki page <a href="https://github.com/Studio3T/robomongo/wiki/Robomongo-ECMAScript-2015-(aka-ES6)-Support">Robomongo ECMAScript 2015 (aka ES6) Support</a>.</p>
+
+<p>The list of ECMAScript 2015 features goes very long, a good source for all list is <a href="http://exploringjs.com/es6/index.html">Exploring ES6 book by Dr Axel Rauschmayer - 2015</a>.</p>
+
+<p><strong>References:</strong> <br>
+JavaScript Changes in MongoDB 3.2: <br>
+<a href="https://docs.mongodb.com/manual/release-notes/3.2-javascript/">https://docs.mongodb.com/manual/release-notes/3.2-javascript/</a></p>
+
+<p>JavaScript Reference <br>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference</a></p>
+
+<p>Exploring ES6 book by Dr Axel Rauschmayer - 2015 <br>
+<a href="http://exploringjs.com/es6/index.html">http://exploringjs.com/es6/index.html</a>  </p>
+
+<p>ECMAScript® 2015 Language Specification: <br>
+<a href="http://www.ecma-international.org/ecma-262/6.0/index.html">http://www.ecma-international.org/ecma-262/6.0/index.html</a></p>
+
+<hr>
+
+<p><a name="4"></a>  </p>
+
+<h2 id="4improvementsbugfixes">4. Improvements &amp; Bug Fixes</h2>
+
+<p><a name="4a"></a>  </p>
+
+<h3 id="afixforrobo3tshelltimeoutissue">a. Fix for Robo 3T Shell Timeout Issue</h3>
+
+<p>This fix is an attempt to solve a high importance problem reported by many users in different tickets. </p>
+
+<p>Tickets effected by this issue: <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1106">1106: Scripts end prematurely and randomly when using loop [High Vote]</a> <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1119">1119: 0.9-RC8+ silently stops script when inserting in loop</a> <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1098">1098: Aggregation runs successfully but not results returned</a> <br>
+And more: <a href="https://github.com/Studio3T/robomongo/issues/1121">1121</a>,<a href="https://github.com/Studio3T/robomongo/issues/1130">1130</a>,<a href="https://github.com/Studio3T/robomongo/issues/1138">1138</a>,<a href="https://github.com/Studio3T/robomongo/issues/1139">1139</a>,<a href="https://github.com/Studio3T/robomongo/issues/1169">1169</a>,<a href="https://github.com/Studio3T/robomongo/issues/1201">1201</a>,<a href="https://github.com/Studio3T/robomongo/issues/1214">1214</a>,<a href="https://github.com/Studio3T/robomongo/issues/1253,[1254](https://github.com/Studio3T/robomongo/issues/1254),[1259](https://github.com/Studio3T/robomongo/issues/1259">1253</a>,<a href="https://github.com/Studio3T/robomongo/issues/1269">1269</a>,<a href="https://github.com/Studio3T/robomongo/issues/1241">1241</a>,<a href="https://github.com/Studio3T/robomongo/issues/1279">1279</a>,<a href="https://github.com/Studio3T/robomongo/issues/1366">1366</a></p>
+
+<p><strong>What was the problem?</strong> <br>
+The problem was long lasting scripts were finishing prematurely and silently if the Robo 3T shell timeout (15 seconds by default) has expired. </p>
+
+<p>Here is an example of the problem and fix in practice:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/06/shell_time_all_v3.png" alt="Robomongo is now Robo 3T, with MongoDB 3.4 support"></p>
+
+<p>Note that, by default, the timeout for Robo 3T shell is <code>15 seconds</code>, which can be seen/configured in <code>robo3t.json</code> config file as below:</p>
+
+<pre><code>...
+"shellTimeoutSec" : 15,
+...
+</code></pre>
+
+<p><strong>What is the fix?</strong> <br>
+We added a mechanism to detect this timeout, a new error window to show the problem and a new dialog to configure Robo 3T shell timeout directly from the timeout error window as previosly shown above or from menu item <strong>"Options -> Change Shell Timeout..."</strong> shown below:</p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2017/06/menu_change_shell_v3.png" alt="Robomongo is now Robo 3T, with MongoDB 3.4 support"></p>
+
+<p>The new value of shell timeout ("shellTimeoutSec") is effective immediately on all existing/new tabs and persistent after program restart (saved into config file).</p>
+
+<p><strong>Note:</strong> <br>
+Before this fix, the workaround solution was to modify <code>"shellTimeoutSec" : 15</code> parameter in Robo 3T config file and restart Robo 3T.</p>
+
+<p>Details of workaround solution: <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1106#issuecomment-230258348">https://github.com/Studio3T/robomongo/issues/1106#issuecomment-230258348</a></p>
+
+<p><a name="4b"></a>  </p>
+
+<h3 id="bstabilityimprovementfixincludedtopreventacrashonmacossierra">b. Stability Improvement: Fix included to prevent a crash on MACOS Sierra</h3>
+
+<p>As a part of Robo 3T stability improvements, a fix to prevent a crash at program start seen on on MACOS Sierra has been included in this release and has already fixed these two tickets seen below:</p>
+
+<p><a href="https://github.com/Studio3T/robomongo/issues/1369">#1369: Error on open (1.0.0 crashes on start)</a> <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1349">#1349: Robomongo crashes constantly macOS Sierra </a></p>
+
+<p><a name="4c"></a>  </p>
+
+<h3 id="csecurityimprovementopensslversionupgrade">c.  Security Improvement: OpenSSL version upgrade</h3>
+
+<p>As a part of transition to MongoDB 3.4, we have also upgraded our OpenSSL libraries to a newer version openssl-1.0.1u (2016-Sep-22).</p>
+
+<p>Beside being a security improvement, this upgrade also makes sure that Robo 3T is consistent with latest MongoDB 3.4 which also uses the same OpenSSL version (1.0.1u) and can be seen in MongoDB 3.4 server logs at start:  </p>
+
+<pre><code>C:\Program Files\MongoDB\Server\3.4&gt;bin\mongod.exe --port 27018  
+...
+2017-06-08T18:05:32.660+0300 I CONTROL  [initandlisten] OpenSSL version: OpenSSL 1.0.1u-fips  22 Sep 2016  
+...
+</code></pre>
+
+<p><a name="4d"></a>  </p>
+
+<h3 id="dtoolchainimprovementsmodernc14featuresareenabled">d. Tool Chain Improvements: Modern C++14 features are enabled</h3>
+
+<p>This section is intended for developers who might be interested in contributing Robo 3T open source project.</p>
+
+<p>Along with transition to MongoDB 3.4, we have updated our tool chain and it is now possible to use latest modern C++14 features in Robo 3T code base. <br>
+(Note: Theoretically, C++17 is the current latest C++ version, but we can say C++14 is the latest practically used and implemented by most compiler vendors.)</p>
+
+<p>We are using the following <strong>modern compilers</strong> for Windows, Linux and MAC OS in order:</p>
+
+<ul>
+<li>Visual Studio 2015 Update 3</li>
+<li>GCC 5.4.1</li>
+<li>Clang version: Apple LLVM version 7.3.0 (clang-703.0.31)</li>
+</ul>
+
+<p>It is worth to mention that much more important and fundamental changes in C++ were actually introduced in C++11 Major release. </p>
+
+<p>Some of the new C++14 and C++11 features we are using and updating our code with can be seen here: <br>
+ <a href="https://github.com/Studio3T/robomongo/wiki/Robomongo-Cplusplus-11,-14-Transition-Guide">Robomongo C++11/14 Transition Guide</a></p>
+
+<p><strong>Sources:</strong> <br>
+<a href="https://github.com/mongodb/mongo/wiki/Build-Mongodb-From-Source">Build Mongodb From Source</a></p>
+
+<hr>
+
+<p><a name="5"></a>  </p>
+
+<h2 id="5renamingfromrobomongotorobo3t">5. Renaming from Robomongo to Robo 3T</h2>
+
+<p>Why are we changing the name? <br>
+Short answer, we need to change the name of our product, purely because of trademark reasons.</p>
+
+<p>More about this subject can be seen in the following link <a href="https://blog.robomongo.org/changing-the-name-of-robomongo/">Changing the name of Robomongo</a>, blog post by Dmitry.</p>
+
+<p>And quoting from Dmitry's blog post:  </p>
+
+<blockquote>
+  <p>Mongo and MongoDB have always been registered trademark of MongoDB Inc, and as the database has grown in commercial importance, the company wants to clear up any confusion between its products and those built around the database. So, it has been talking to companies whose tools use the words Mongo or MongoDB in their names, about changing what they are called. That’s fair enough and we understand its point of view.  </p>
+</blockquote>
+
+<p>With this renaming the new location and the name for config file can be seen below:</p>
+
+<pre><code>Windows  
+    C:\Users\&lt;user&gt;\.3T\robo-3t\1.1.1\robo3t.json
+
+MAC  
+    /Users/&lt;user&gt;/.3T/robo-3t/1.1.1/robo3t.json
+
+Linux  
+    /home/&lt;user&gt;/.3T/robo-3t/1.1.1/robo3t.json
+</code></pre>
+
+<p>Please also see: <br>
+<a href="https://github.com/Studio3T/robomongo/wiki/Robomongo-Config-File-Guide">Robo 3T Config File Guide</a></p>
+
+<hr>
+
+<p><a name="centos"></a>  </p>
+
+<h2 id="6centoscompatibilityproblem">6. CentOS Compatibility Problem</h2>
+
+<p>With transition to MongoDB 3.4, we updated our tool chain to modern tools, unfortunately some of the required packages were not available for CentOS (e.g. they were available for Ubuntu), and this caused Robo 3T not to work on CentOS 6 and 7.  </p>
+
+<p>Until these packages are available or we found another solution, unfortunately Robo 3T will not launch on CentOS 6 and 7. We hope this will be a temporary problem and hope to support again CentOS as soon as possible.</p>
+
+<p><a name="Download"></a>  </p>
+
+<h2 id="download">Download</h2>
+
+<p>Download <a href="https://robomongo.org/download">Robo 3T 1.1</a>, our best version of Robo 3T.</p>
+
+<p>Enjoy!</p>
+
+<p><a href="https://robomongo.org/download"><img width="400" src="https://blog.robomongo.org/content/images/2017/06/robomongo-mongo34-uppercase-wider.png" alt="Robomongo is now Robo 3T, with MongoDB 3.4 support"></a></p>
+
+<p>Follow us on Twitter (<a href="https://twitter.com/robomongo">@robomongo</a>) to be notified about future releases. Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub</a>. </p>]]></content:encoded></item><item><title><![CDATA[Robomongo 1.0 — Official Release]]></title><description><![CDATA[<p>We are very happy to announce the release of Robomongo 1.0! We are very proud to highlight the fact that it’s not a Release Candidate anymore but a <em>real</em> 1.0 release this time!</p>
+
+<p>The new Robomongo comes with a number of improvements and bug fixes:</p>
+
+<h2 id="1updatenotificationsbar">1. Update</h2>]]></description><link>https://blog.robomongo.org/robomongo-1-0/</link><guid isPermaLink="false">7b841fde-99fa-4854-bdf0-2dcd3ca1fa1b</guid><dc:creator><![CDATA[Gokhan Simsek]]></dc:creator><pubDate>Thu, 20 Apr 2017 12:57:00 GMT</pubDate><media:content url="https://blog.robomongo.org/content/images/2017/04/cover.jpg" medium="image"/><content:encoded><![CDATA[<img src="https://blog.robomongo.org/content/images/2017/04/cover.jpg" alt="Robomongo 1.0 — Official Release"><p>We are very happy to announce the release of Robomongo 1.0! We are very proud to highlight the fact that it’s not a Release Candidate anymore but a <em>real</em> 1.0 release this time!</p>
+
+<p>The new Robomongo comes with a number of improvements and bug fixes:</p>
+
+<h2 id="1updatenotificationsbar">1. Update Notifications Bar</h2>
+
+<p>We have added an update notification bar. It will notify you about new releases of Robomongo. We’ll check for updates for the first time 30 seconds after program start and then periodically, once per hour. The screenshots related to this feature are below:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2017/04/updateBar2_v1.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p>It is possible to disable/enable the update notification bar from the "Options" menu:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2017/04/update_bar_menu_v1.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<h2 id="2welcometab">2. Welcome Tab</h2>
+
+<p>A dynamic welcome tab has been added which consists of two sections. Left section consists of dynamically updated header, image and text. Right section consists of the list of latest ten blogs.</p>
+
+<p>For fast loading of Welcome tab, all of the content of the tab is designed to be loaded from cache when possible. Every refresh or re-open of Welcome tab, Robomongo will check if there is new content (header, image, text or blog), if not the content of the tab will be loaded from cache.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/04/wt2_v1.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p>It is possible to open Welcome Tab again after closing or refresh existing Welcome Tab content from "Window -> Open/Refresh Welcome Tab" menu item as seen below:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2017/04/wt_menu_v2.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<h2 id="3welcomewizard">3. Welcome Wizard</h2>
+
+<p>We have added a 2-page welcome wizard which will be shown when a new version of Robomongo is launched for the first time.</p>
+
+<p>The first page will show the license as seen below:</p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2017/04/setupw_p1_v1.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p>And the second page will ask for optional contact information in order to receive updates from Robomongo. </p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2017/04/setupw_p2_v2.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p><strong>Note:</strong> Due to some unstable behaviors
+ related to SSL, second page of welcome wizard is disabled for Linux.</p>
+
+<h2 id="4improvementsandbugfixes">4. Improvements and Bug Fixes</h2>
+
+<h4 id="areplicasetnameconfigurableonui">a. Replica set name configurable on UI</h4>
+
+<p>For some cloud base MongoDB services, other than Mongo Atlas, users were required to specify the set name manually in the config file due to some issues where Robomongo was unable to get learn the set name.</p>
+
+<p>In order to solve this problem and make life easier, we added UI configurable set name into connection settings dialog as seen below:</p>
+
+<p><img width="600" src="https://blog.robomongo.org/content/images/2017/04/setname_v1.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p><strong>Note:</strong> Most of the time, Robomongo will work and connect if the set name is not entered. Set name is 'optional' since Robomongo can automatically learn the set name if the database user have the admin rights. (more specifically the rights to perform <code>rs.status</code> command). If database user does not have admin rights then users can enter the set name manually and continue working.</p>
+
+<p>Related Github issue: <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1288">ReplicaSet Name is not configurable on UI</a></p>
+
+<h4 id="bconfigurationfilesystemlocationchange">b. Configuration file system location change</h4>
+
+<p>The location of the Robomongo config file has been changed as seen below:</p>
+
+<p>Old path: <br>
+<code>~\.config\robomongo\1.0\robomongo.json</code></p>
+
+<p>New path: <br>
+<code>~\.3T\robomongo\1.0.0\robomongo.json</code></p>
+
+<p><strong>More:</strong> <br>
+<a href="https://github.com/Studio3T/robomongo/wiki/Robomongo-Config-File-Guide">Robomongo Config File Guide</a></p>
+
+<h4 id="cbugfixes">c. Bug fixes</h4>
+
+<h6 id="ifixtoavoidthesamesetnameproblem">i. Fix to avoid the same set name problem:</h6>
+
+<p>Most of the time, Robomongo rejects to create second connection with a connection error when two or more replica sets with same set name is used. But in some cases reported by users, Robomongo connects to the second set with same set name, and shows wrong replica members or connection name which might cause serious misrepresentation and problems. </p>
+
+<p>This fix tries to avoid this dangerous situation with trying harder to not to create this second replica set connection with same set name and showing an error windows as shown below:</p>
+
+<p><img width="400" src="https://blog.robomongo.org/content/images/2017/04/same_setname_v0.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p>As seen in the error, which includes a hint to root cause and solution to the problem, <strong>the workaround solution</strong> here is to use different instances of Robomongo in order to connect to the replica sets with same set names.</p>
+
+<p>Related Github issue: <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1302">Robomongo reuses replicaset hostnames if there's two configurations with same replicaset name and different hosts</a></p>
+
+<h6 id="iitimestampvalueisrepresentedincorrectly">ii. Timestamp value is represented incorrectly</h6>
+
+<p>This issue was related to representation of <code>Timestamp</code> data type. As seen below, the value of timestap was calculated and shown incorrectly, we have included a fix for this problem.</p>
+
+<p>The problem and the fix on Robomongo:</p>
+
+<p><img width="900" src="https://blog.robomongo.org/content/images/2017/04/ts_all_v6.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p>The correct value, which is <code>Timestamp(1454752004, ...)</code>, can be verified using mongo shell as below:</p>
+
+<pre><code class="language-`">&gt; db.getCollection('Team').find({})
+{ "_id" : ObjectId("58ef21..."), "ts" : Timestamp(1454752004, 743) }
+</code></pre>
+
+<p>Related Github issue: <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1159">Timestamp value is represented incorrectly (All versions)</a></p>
+
+<h6 id="iiilocaltimezoneshowswrongdatehighvoteissue">iii. Local Timezone shows wrong date [high vote issue]</h6>
+
+<p>We have included a fix to solve the problem where the date and the time zone difference were shown incorrectly. This issue is more likely to be seen in systems which have big UTC time difference such as <code>UTC-12:00</code>, <code>UTC+14:00</code> etc. or when there is a day difference between local time and <code>UTC+00:00</code>. </p>
+
+<p>The problem and the fix can be seen below:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2017/04/tz_all_v5-1.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p>Related Github issue: <br>
+<a href="https://github.com/Studio3T/robomongo/issues/501">Options - Display Dates in - Local Timezone shows wrong date. </a></p>
+
+<h6 id="ivtimezoneshownas00000whenutc0000isusedaslocaltimezone">iv. Time zone shown as "000:00" when UTC +00:00 is used as local timezone</h6>
+
+<p>This fix solves the problem where time zones were shown incorrectly when UTC +00:00 is used as system local time zone:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2017/04/utc00_all_v2.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p>Related Github issue: <br>
+<a href="https://github.com/Studio3T/robomongo/issues/1309">Time zone shown as "000:00" when UTC +00:00 is used as local timezone</a></p>
+
+<h4 id="daboutrobomongodialogchanges">d. "About Robomongo" dialog changes</h4>
+
+<p>The first "About" tab has minor changes due to re-branding, the new tab "License Agreement" is added as a second tab, they are shown below:</p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2017/04/about_page1_v0.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2017/04/about_page2_v0.png" alt="Robomongo 1.0 — Official Release"></p>
+
+<h2 id="roadmap">Roadmap</h2>
+
+<p>Our next major priority is to complete support for the most popular features:</p>
+
+<ul>
+<li>SSH &mdash; <span style="color: green">Implemented</span></li>
+<li>TLS/SSL &mdash; <span style="color: green">Implemented</span></li>
+<li>Replica Sets  &mdash; <span style="color: green">Implemented</span></li>
+<li>MongoDB 3.4 Support &mdash; <span style="color: red">Planned for Next Release</span></li>
+</ul>
+
+<h2 id="download">Download</h2>
+
+<p>Download <a href="https://robomongo.org/download">Robomongo 1.0</a>, our best version of Robomongo.</p>
+
+<p>Enjoy!</p>
+
+<p><a href="https://robomongo.org/download"><img width="300" src="https://blog.robomongo.org/content/images/2017/04/robo-book.png" alt="Robomongo 1.0 — Official Release"></a></p>
+
+<p>Follow us on Twitter (<a href="https://twitter.com/robomongo">@robomongo</a>) to be notified about future releases. Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub</a>. </p>]]></content:encoded></item><item><title><![CDATA[Robomongo has been acquired by 3T]]></title><description><![CDATA[<p><img src="https://blog.robomongo.org/content/images/2017/03/variant02.png" width="600"></p>
+
+<p>As you may already have seen, we’ve today announced that Robomongo  has been acquired by <a href="https://studio3t.com/">3T Software Labs</a>. So we wanted to share with the community who have contributed so much to Robomongo’s success the reasons behind this step and why we believe it is good thing for</p>]]></description><link>https://blog.robomongo.org/robomongo-has-been-acquired-by-3t/</link><guid isPermaLink="false">460a2a64-0490-4c8a-9f1d-ebdb5a85a59d</guid><dc:creator><![CDATA[Dmitry Schetnikovich]]></dc:creator><pubDate>Tue, 14 Mar 2017 10:06:53 GMT</pubDate><content:encoded><![CDATA[<p><img src="https://blog.robomongo.org/content/images/2017/03/variant02.png" width="600"></p>
+
+<p>As you may already have seen, we’ve today announced that Robomongo  has been acquired by <a href="https://studio3t.com/">3T Software Labs</a>. So we wanted to share with the community who have contributed so much to Robomongo’s success the reasons behind this step and why we believe it is good thing for anyone using MongoDB tools.</p>
+
+<p>First off, we’d like to reassure everyone that this isn’t any sort of end for Robomongo or its users. 3T has committed to continue development of Robomongo in parallel with its own MongoDB IDE and will continue to support all existing Robomongo users. No-one will be forced to switch products.</p>
+
+<p>Even better, Robomongo is now completely free as 3T is abolishing the subscription model, with everyone receiving upgrades at exactly the same time. Existing subscribers can choose to receive a free license for 3T’s Studio 3T Pro tool (previously known as MongoChef) - but it certainly isn’t compulsory. </p>
+
+<p>Why have we done this? Three things really.</p>
+
+<p>Firstly, we’re seeing astronomical growth in the MongoDB world, as more and more people adopt it for more and more projects, many at an enterprise level. It is an exciting time for the ecosystem and bringing together 3T’s Studio 3T tool, the leading commercial MongoDB environment, with Robomongo, the most used open source tool in the area, will help accelerate development for everyone. While they do similar things, the tools have completely different audiences – professionals using MongoDB in their enterprises in the case of Studio 3T and enthusiasts developing with Robomongo. We’ve seen a lot of people start on Robomongo and then evolve to Studio 3T when their needs change.</p>
+
+<p>Secondly, it requires significant resources to keep up Robomongo’s development. At Paralect we’ve had lots of help from the community, which we’re really grateful for, but we needed a partner that could invest for the long-term and 3T fits the bill precisely.</p>
+
+<p>Thirdly, and probably most importantly we know and trust each other. We get on well and are all committed to MongoDB and its success. Both tools were launched at the same time, in 2013, and we’ve grown up together, and admire each other’s success. From the Robomongo point of view, we see 3T as having the perfect combination of skills and resources to take the tool forward. At 3T we’re excited to be working more closely with the community and learning from them.</p>
+
+<p>What does it mean to you as a Robomongo user? You’ll not see any real change and the existing Paralect team (including myself) will work together with 3T’s experienced developers for the next six months to ensure a smooth handover for Robomongo. As we said development will continue as normal, so watch this space for the next version of Robomongo.</p>
+
+<p>Please check our <a href="https://robomongo.org/#faq">FAQ</a> and if you have any more questions then don’t hesitate to add them to the comments section below, and we’ll answer as soon as we can.</p>
+
+<p>Thanks for your support, now and in the future.</p>]]></content:encoded></item><item><title><![CDATA[Changing the name of Robomongo]]></title><description><![CDATA[<p>When we released our MongoDB tool back in March 2013, Robomongo seemed like a great name. After all, it provided powerful, robust functions that helped manage your MongoDB project (and we all like robots too!). </p>
+
+<p>However, since then things have changed — MongoDB is now used by thousands more people than</p>]]></description><link>https://blog.robomongo.org/changing-the-name-of-robomongo/</link><guid isPermaLink="false">9d92e256-875b-4178-9c53-7c0a63984e41</guid><dc:creator><![CDATA[Dmitry Schetnikovich]]></dc:creator><pubDate>Mon, 13 Feb 2017 12:58:07 GMT</pubDate><content:encoded><![CDATA[<p>When we released our MongoDB tool back in March 2013, Robomongo seemed like a great name. After all, it provided powerful, robust functions that helped manage your MongoDB project (and we all like robots too!). </p>
+
+<p>However, since then things have changed — MongoDB is now used by thousands more people than three years ago, on more and more projects, which is great for the whole community. Mongo and MongoDB have always been registered trademark of MongoDB Inc, and as the database has grown in commercial importance, the company wants to clear up any confusion between its products and those built around the database. So, it has been talking to companies whose tools use the words Mongo or MongoDB in their names, about changing what they are called. That’s fair enough and we understand its point of view.</p>
+
+<p>So, essentially this means we’re going to have to change the name of our product, purely for trademark reasons. What will the new name be? We’ve not yet fixed on one, but we wanted to give the community a heads up that the name will change, probably over the next couple of months. </p>
+
+<p>Of course, if you have any ideas, do feel free to drop us a line!</p>]]></content:encoded></item><item><title><![CDATA[Robomongo 1.0 RC1 brings support to Replica Set Clusters]]></title><description><![CDATA[<p>We are very happy to announce the new version of Robomongo 1.0-RC1 with Replica Set support!</p>
+
+<p><img width="600" src="https://blog.robomongo.org/content/images/2017/02/set.png"></p>
+
+<p>In this release, we have lots of changes and improvements. In summary, Replica Set feature is the most major feature of this release, we have error reporting improvements for almost all operations, we</p>]]></description><link>https://blog.robomongo.org/robomongo-1-rc1/</link><guid isPermaLink="false">ac2b7b88-c4e5-4e5a-b8e5-0fa148c06ddb</guid><dc:creator><![CDATA[Gokhan Simsek]]></dc:creator><pubDate>Thu, 02 Feb 2017 15:00:02 GMT</pubDate><media:content url="https://blog.robomongo.org/content/images/2017/02/cover2.jpg" medium="image"/><content:encoded><![CDATA[<img src="https://blog.robomongo.org/content/images/2017/02/cover2.jpg" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"><p>We are very happy to announce the new version of Robomongo 1.0-RC1 with Replica Set support!</p>
+
+<p><img width="600" src="https://blog.robomongo.org/content/images/2017/02/set.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p>In this release, we have lots of changes and improvements. In summary, Replica Set feature is the most major feature of this release, we have error reporting improvements for almost all operations, we have new 'Attributes' column to see important connection properties such as 'Replica Set', 'SSL' and 'SSH'. And many more explained in the following sections.</p>
+
+<h2 id="1replicasetsupport">1. Replica Set Support</h2>
+
+<p>The major feature of this release is support for replica sets. With this release Robomongo supports replica set with/without SSL. </p>
+
+<p>Let's start with two quick overview videos and then explain these features in more details after the videos.</p>
+
+<p><strong>Quick overview video about Replica Set features:</strong>  </p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/c9t0yc8NEzg" frameborder="0" allowfullscreen></iframe>
+
+<p><strong>Quick overview video of replica set 'Offline Mode':</strong> (It is still possible to work on secondaries)</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qVehJNEUbWY" frameborder="0" allowfullscreen></iframe>
+
+<h4 id="aonlineofflinemodes">a. Online &amp; Offline Modes</h4>
+
+<p><strong>Online mode</strong> <br>
+If the replica set's primary is reachable, the connection will be online mode as seen below:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1_online_orig-1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><strong>Offline mode</strong> <br>
+If the replica set's primary is not reachable, the connection will switch into 'Offline' mode.</p>
+
+<p>Good news is, even in the offline mode, it is still possible to work on a secondary member (read-only operations) from right click menu seen below:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1_offline_b_v1-1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters">
+Details about this menu items will be in section b.</p>
+
+<p><strong>Replica set status aka "rs.status()" shortcut menu item</strong> <br>
+With this new feature it is possible to check replica set status even in offline mode (primary is unreachable) if there is at least one reachable member. In the example shown below, we can get all information about the health of replica set and members with right click on replica set folder.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1_offline_status_menu_v4-1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1_offline_status_clicked_orig.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p>'Status of Replica Set' menu item will be enabled if there is at least one reachable member.</p>
+
+<p><strong>Automatically disabled/enabled right click menu</strong> <br>
+Final words about 'Offline' mode is that some of the rightk click menu items will be disabled. Only 'Refresh' and 'Disconnect' will be enabled. When the replica set's primary becomes reachable, the menu items will be enabled again.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1_offline_v1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p>If a replica set member is not reachable, the member itself will be disabled (grayed out) and it's right click menu &amp; double click features will be disabled until it becomes reachable. </p>
+
+<h4 id="breplicasetmemberrightclickmenu">b. Replica set member right click menu</h4>
+
+<p>For every reachable (primary or secondary) replica set members (nodes), the following operations are supported as seen below screenshot:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2017/01/1_member_right_click_menu_v2.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p>Now, let's see how the first two items work.</p>
+
+<p><strong>Open direct shell to a replica set member:</strong> <br>
+With this feature, it is possible to open a shell tab to any reachable member (primary or secondary) and continue to work directly on that member on a new shell tab as shown below.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1_open_shell_menu_v2-1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1_open_shell_opened_orig.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><strong>Open direct connection to a replica set member:</strong> <br>
+With this feature, it is possible to open direct connection to any reachable member (Primary or Secondary) and continue to work on that connection as direct connection instead of replica set connection if needed. </p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1_open_dir_conn_v3.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1_dir_conn_opened_orig.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<h4 id="cmongoatlassupport">c. Mongo Atlas support</h4>
+
+<p><strong>Connection to a replica set on Mongo Atlas cloud</strong> <br>
+It is possible to connect to a replica set with 3, 5 or more nodes (members). In the example below Robomongo is connected to a replica set with 5 members which is a cluster on Mongo Atlas cloud.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/1.-rep_set_atlas_v2.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<h4 id="dotherreplicasetfeatures">d. Other Replica Set features</h4>
+
+<p><strong>A shell tab will work even after replica set primary changed</strong> <br>
+We have added a functionality to dynamically update a shell's primary node with correct primary node which allows users to be able to re-run a tab even when the primary of replica set has changed.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/02/1_primary_change_bef_2_v3.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/02/1_primary_change_aft_v2.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><strong>Cached set name feature</strong> <br>
+We have implemented cached set name feature which achieves two times faster connections. With this feature, set name is saved in connection settings file of Robomongo and survives after closing Robomongo and can be used as long as the connection is not edited or the config file is not deleted. After any edit/save connection settings, failed connections or cloned connection settings, the cached set name will be cleared to empty string. </p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2017/01/1.-cached_set_name_v3.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><strong>Smart member addition</strong> <br>
+We have implemented a small helper algorithm for member addition where clicking add button will automatically copy the last entered member's hostname (or IP), increment it's port and create a new member for you. It's also possible to edit any member in-place simply by double clicking on it.</p>
+
+<p><img width="600" src="https://blog.robomongo.org/content/images/2017/02/1_member_add_v1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p>Note: 'Find Set' button/feature is also planned for the next releases which will automatically find and configure all members by a simple click after the user enters at least one reachable replica set member.</p>
+
+<h2 id="2newfeaturesimprovements">2. New Features &amp; Improvements</h2>
+
+<p><strong>a.</strong> For easier access to some important connection properties, new column 'Attributes' is added in connections list dialog as shown below.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/2.-attributes_v4-1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><strong>b.</strong> Improved error handling (no double error windows) and new operation logging for all fail and success conditions have been added for almost all operations (except 'Index' operations). Some of them are listed below: </p>
+
+<ul>
+<li>Create, Drop Database  </li>
+<li>Create, Edit User</li>
+<li>Create, Drop, Duplicate, Rename Collection  </li>
+<li>Insert Document  </li>
+<li>Remove document, Delete document, Remove all documents (triggered both from explorer and from result widget)    </li>
+<li>Refresh Users</li>
+<li>Refresh Functions</li>
+<li>Refresh Collections</li>
+<li>Connection establish &amp; refresh server fail and success cases.</li>
+</ul>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2017/01/2.-double_error_0.9_v4-1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2017/01/2.-double_error_fixed_v1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p>In the following screenshots, showing new operation logging for fail and success conditions as well as connection establish failures: </p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/2.-log_establish_connection_v3.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/2.-log_db_coll_v1-1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><img src="https://blog.robomongo.org/content/images/2017/01/2.-log_doc_func_v1.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></p>
+
+<p><strong>c.</strong> Windows size will be saved/restored persistently for <strong>Edit</strong>, <strong>View</strong> and <strong>Insert Document</strong> dialogs.</p>
+
+<p><strong>d.</strong> Connections are automatically found and imported from the latest installed Robomongo version.  </p>
+
+<p><strong>e.</strong> Previously not existing, new error reporting/handling and logging have been added for the operations below:</p>
+
+<ul>
+<li>Create, Drop Function        </li>
+<li>Drop User  </li>
+</ul>
+
+<p><strong>f.</strong> More informative and adjusted log level prefix strings haven added for log window. (Error, Warn, Info etc..) </p>
+
+<p><strong>g.</strong> After a new connection is created, now the focus goes to the newly created connection (end of list) instead of the beginning of connections list. And when Robomongo is opened, the focus goes to the end of the connection list instead of beginning. These two features makes it easier to work if there are many connections in the list.</p>
+
+<p><strong>i.</strong> Error messages added and error handling for 'remove document', 'remove all documents' operations triggered  explorer and single/multi 'delete document' from results window have been re-implemented and improved.</p>
+
+<p><strong>j.</strong> Relevant errors are shown for the following cases now: </p>
+
+<ul>
+<li>Drop attempt of non-existing collection.</li>
+<li>Duplicating a collection with a collection name which already exists finishes silently. </li>
+</ul>
+
+<h2 id="3fixes">3. Fixes</h2>
+
+<ul>
+<li><p>Fix for the problem where the connections list comes empty if the Robomongo config file or it's directory do not exist.</p></li>
+<li><p>Fix for the problem where 'in-progress bar' widget was not centered on main window for "Update Documents/Remove Documents" operations.
+<a href="https://github.com/paralect/robomongo/issues/1256">https://github.com/paralect/robomongo/issues/1256</a></p></li>
+<li><p>Fix for two problems where the operations 'insert or update documents' in one tab was causing auto reloading of other unrelated tabs and also multiple error windows to popup.
+<a href="https://github.com/paralect/robomongo/issues/1236">https://github.com/paralect/robomongo/issues/1236</a></p></li>
+<li><p>Fix for the problem where the operations 'remove document', 'remove all documents' triggered explorer and single or multi 'delete document' from results window were causing auto reloading of other unrelated tabs.</p></li>
+</ul>
+
+<h2 id="roadmap">Roadmap</h2>
+
+<p>Our next major priority is to complete support for the most popular features:</p>
+
+<ul>
+<li>SSH &mdash; <span style="color: green">Implemented</span></li>
+<li>TLS/SSL &mdash; <span style="color: green">Implemented</span></li>
+<li>Replica Sets  &mdash; <span style="color: green">Implemented</span></li>
+<li>User Management &mdash; <span style="color: red">Planned for Next Release</span></li>
+</ul>
+
+<h2 id="download">Download</h2>
+
+<p>Download <a href="https://robomongo.org/download">Robomongo 1.0-RC1</a>, our best version of Robomongo.</p>
+
+<p>Enjoy! And... <a href="https://robomongo.org/buy">support us</a>! Together, let's push Robomongo to the sky!</p>
+
+<p><a href="https://robomongo.org/download"><img width="450" src="https://blog.robomongo.org/content/images/2017/02/bottom.png" alt="Robomongo 1.0 RC1 brings support to Replica Set Clusters"></a></p>
+
+<p>Follow us on Twitter (<a href="https://twitter.com/robomongo">@robomongo</a>) to be notified about future releases. Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub tracker</a>. </p>]]></content:encoded></item><item><title><![CDATA[Robomongo 0.9.0 Final]]></title><description><![CDATA[<p>We are very happy to announce final version of Robomongo 0.9.0! </p>
+
+<p>As some may have noticed, we have released ten release candidates (RCs) in the past 8 months. This version is final release version, tested thoroughly and is ready to be used in production. We have added several</p>]]></description><link>https://blog.robomongo.org/robomongo-0-9-0-final/</link><guid isPermaLink="false">e23f8fe3-20c2-4361-a98c-3c9d56d8411f</guid><dc:creator><![CDATA[Gokhan Simsek]]></dc:creator><pubDate>Thu, 06 Oct 2016 14:09:21 GMT</pubDate><media:content url="https://blog.robomongo.org/content/images/2016/10/the-best-01.jpg" medium="image"/><content:encoded><![CDATA[<img src="https://blog.robomongo.org/content/images/2016/10/the-best-01.jpg" alt="Robomongo 0.9.0 Final"><p>We are very happy to announce final version of Robomongo 0.9.0! </p>
+
+<p>As some may have noticed, we have released ten release candidates (RCs) in the past 8 months. This version is final release version, tested thoroughly and is ready to be used in production. We have added several new features and enhancements. We suggest you to use this latest and stable version.</p>
+
+<p>We would like to also thank our contributors for their help to make Robomongo better. We have included and tested several new features from them in this release.</p>
+
+<h2 id="1fullsizeeditorwithdockableoutputwindow">1. Full Size Editor with Dockable Output Window</h2>
+
+<p>With this new feature, Robomongo can be used with maximized/full size query editor with dockable/floating output window. This feature is very useful especially when you have long scripts or you just want to see output window in your second monitor. </p>
+
+<p>We have also implemented some advanced behaviors where output windows can be docked/undocked for each query tab. And another implementation is smart connection between query editor tabs and output windows where selecting a tab or an output window activates/brings the related tab or output window into front which feels great when you have multiple tabs/output windows. (Example usage is shown in a short video below)</p>
+
+<p>Here is how new Robomongo looks like when output window is undocked:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/09/floating_v2.png" alt="Robomongo 0.9.0 Final"></p>
+
+<p>It is possible to dock the output window back to main window which is the default behavior when a script is run for the first time. </p>
+
+<p>Default behavior - output window is docked: <br>
+<img src="https://blog.robomongo.org/content/images/2016/09/docked_v2.png" alt="Robomongo 0.9.0 Final"></p>
+
+<p>Here is a short video showing this new feature:</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qjuQCdyQMJs" frameborder="0" allowfullscreen></iframe>
+
+<h2 id="2copynameandcopypath">2. Copy Name and Copy Path</h2>
+
+<p>With this new feature, we have added two context menu "Copy Name" and "Copy Path". When "Copy Name" is selected, the name field of the object is copied into clipboard and when "Copy Path" is selected, the JSON path of the object is copied into clipboard.</p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2016/09/copy2_v3.png" alt="Robomongo 0.9.0 Final"></p>
+
+<p>This feature is implemented by Rafal Jezewski (<a href="https://github.com/xuser86">xuser86</a>).</p>
+
+<h2 id="3currentoperationsandkilloperation">3. Current Operations and Kill Operation</h2>
+
+<p>We have added two menu items into database context menu. With this feature, it is possible to right click on a database and select "Current Operations" to see information about in-progress operations for that database instance or select "Kill Operation" to terminate an operation specified by the operation ID (which can retrieved from result of "Current Operations"). </p>
+
+<p>Some screenshots of these new database menu items: <br>
+<img width="550" src="https://blog.robomongo.org/content/images/2016/09/cur_kill_v6.png" alt="Robomongo 0.9.0 Final"></p>
+
+<p><strong>Current Operations</strong>
+<img width="650" src="https://blog.robomongo.org/content/images/2016/09/currentOps_orig-1.png" alt="Robomongo 0.9.0 Final"></p>
+
+<p>More information: <a href="https://docs.mongodb.com/manual/reference/method/db.currentOp/">https://docs.mongodb.com/manual/reference/method/db.currentOp/</a></p>
+
+<p><strong>Kill Operation</strong>
+<img width="550" src="https://blog.robomongo.org/content/images/2016/09/killop_v4-1.png" alt="Robomongo 0.9.0 Final"></p>
+
+<p>More information: <br>
+<a href="https://docs.mongodb.com/manual/reference/method/db.killOp/">https://docs.mongodb.com/manual/reference/method/db.killOp/</a></p>
+
+<p>This feature is implemented by Flier Lu (<a href="https://github.com/flier">flier</a>).</p>
+
+<h2 id="4minimizetotrayicon">4. Minimize to Tray Icon</h2>
+
+<p>This new feature is implemented for Windows and it adds the ability to minimize to tray icon and related setting to enable/disable it. This option comes disabled by default.</p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2016/09/tray_menu_v4.png" alt="Robomongo 0.9.0 Final"></p>
+
+<p>When this option is enabled, closing Robomongo will minimize to tray instead of exiting the program. Here are screenshots from Windows tray:</p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2016/09/tray_icon_show_and_min_v2.png" alt="Robomongo 0.9.0 Final"></p>
+
+<p>This feature is implemented by Joshua James (<a href="https://github.com/JoshJ1091">JoshJ1091</a>).</p>
+
+<h2 id="5otherenhancements">5. Other Enhancements</h2>
+
+<ul>
+<li>Cloud platforms <a href="https://www.compose.com/">Compose</a>, <a href="https://www.mlab.com/">mLab</a> and <a href="https://aws.amazon.com/ec2/">Amazon EC2</a> were tested and added as supported platforms.</li>
+<li>Maximize/Restore result button behavior and icon have been improved.</li>
+<li>For better code quality and code reviews, <a href="https://github.com/paralect/robomongo/wiki/Robomongo-Code-Quality">Robomongo Code Quality</a> and <a href="https://github.com/paralect/robomongo/wiki/Robomongo-Code-Review">Robomongo Code Review</a> pages have been created.</li>
+</ul>
+
+<h2 id="contributorsofthisrelease">Contributors of This Release</h2>
+
+<p>Special thanks to our contributors for their help and interest:</p>
+
+<ul>
+<li>Rafal Jezewski (<a href="https://github.com/xuser86">xuser86</a>)</li>
+<li>Joshua James (<a href="https://github.com/JoshJ1091">JoshJ1091</a>)</li>
+<li>Flier Lu (<a href="https://github.com/flier">flier</a>)</li>
+</ul>
+
+<h2 id="roadmap">Roadmap</h2>
+
+<p>The plan for some major features can be seen in the list below :</p>
+
+<ul>
+<li>Replica Sets  &mdash; <span style="color: green">In-progress</span></li>
+<li>Export/Import &mdash; <span style="color: green">In-Progress</span></li>
+<li>User Management &mdash; <span style="color: red">Planned for Next Releases </span></li>
+<li>Stability Enhancements &mdash; <span style="color: red">Planned for Next Releases </span></li>
+<li>Multiple Simultaneous Queries <a href="https://github.com/paralect/robomongo/issues/1161">#1161</a>&mdash; <span style="color: red">Planned for Next Releases </span></li>
+</ul>
+
+<p>See more on: <br>
+<a href="https://github.com/paralect/robomongo#whats-planned-for-the-next-release">https://github.com/paralect/robomongo#whats-planned-for-the-next-release</a>  </p>
+
+<h2 id="download">Download</h2>
+
+<p>Download <a href="https://robomongo.org/download">Robomongo 0.9.0</a>, our best version of Robomongo.</p>
+
+<p>Enjoy! And... <a href="https://robomongo.org/buy">support us</a>! Together, let's push Robomongo to the sky!</p>
+
+<p><a href="https://robomongo.org/download"><img width="200" src="https://blog.robomongo.org/content/images/2016/09/robomongo-tea-2-1.png" alt="Robomongo 0.9.0 Final"></a></p>
+
+<p>Follow us on Twitter (<a href="https://twitter.com/robomongo">@robomongo</a>) to be notified about future releases. <br>
+Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub tracker</a>. </p>]]></content:encoded></item><item><title><![CDATA[Robomongo RC10 brings support to SSL]]></title><description><![CDATA[<p>We are very happy to announce the new Robomongo with SSL support: <br>
+Robomongo 0.9.0 RC10! </p>
+
+<p>In this new release, Robomongo supports almost all SSL options that can be configured with <code>mongo</code> shell and Robomongo is probably the only MongoDB GUI program which can achieve this.</p>
+
+<h2 id="1sslsupport">1. SSL Support</h2>]]></description><link>https://blog.robomongo.org/robomongo-rc10/</link><guid isPermaLink="false">61d91065-177a-4c02-a66b-b27b140fcff7</guid><dc:creator><![CDATA[Gokhan Simsek]]></dc:creator><pubDate>Fri, 19 Aug 2016 17:29:22 GMT</pubDate><content:encoded><![CDATA[<p>We are very happy to announce the new Robomongo with SSL support: <br>
+Robomongo 0.9.0 RC10! </p>
+
+<p>In this new release, Robomongo supports almost all SSL options that can be configured with <code>mongo</code> shell and Robomongo is probably the only MongoDB GUI program which can achieve this.</p>
+
+<h2 id="1sslsupport">1. SSL Support</h2>
+
+<p>Robomongo (and MongoDB) supports TLS/SSL (Transport Layer Security/Secure Sockets Layer) to encrypt all of the network traffic. TLS/SSL ensures that network traffic is only readable by the trusted clients/servers.</p>
+
+<p>Robomongo (and MongoDB) uses OpenSSL libraries. SSL encryption is done only with strong SSL ciphers with  minimum of 128-bit key length for all connections.</p>
+
+<h5 id="basicconnectiontomongodbwithsslencryption">Basic Connection to MongoDB with SSL Encryption</h5>
+
+<p>In order to connect to MongoDB server (mongod or mongos instance or MongoDB Atlas Cloud) which requires basic SSL encryption mode, configure a new Robomongo connection with "Address" (<code>--host</code> i.e. "mongodb.hostname") on Connection tab and "CA Certificate" (<code>--sslCAFile</code>) on SSL tab to validate the server certificates as seen below:</p>
+
+<p><img style="width:550px" src="https://blog.robomongo.org/content/images/2016/08/use-ca.png"></p>
+
+<p>With the configuration above Robomongo will connect to MongoDB server exactly like <code>mongo</code> shell connects with the command below:</p>
+
+<p><code>mongo --ssl --host mongodb.hostname --sslCAFile /etc/ssl/ca.pem</code></p>
+
+<h5 id="connectiontomongodbthatrequiresclientcertificates">Connection to MongoDB that Requires Client Certificates</h5>
+
+<p>In order to connect to MongoDB server (mongod or mongos instance or MongoDB Atlas Cloud) that requires CA-signed client certificate (an SSL certificate signed by a certificate authority), we will use Robomongo SSL options "CA Certificate" and "PEM Cert/Key" (and "Passphrase" if PEM key is encrypted). An example can be seen below:</p>
+
+<p><img style="width:550px" src="https://blog.robomongo.org/content/images/2016/08/pem.png"></p>
+
+<p>The configuration above is equivalent to mongo shell command line connection below:</p>
+
+<p><code>mongo --ssl --host mongdb.hostname --sslPEMKeyFile /etc/ssl/client.pem --sslCAFile /etc/ssl/ca.pem</code> </p>
+
+<h5 id="usingadvancedssloptions">Using Advanced SSL Options</h5>
+
+<p>We have two advanced options, let's firstly see them on Robomongo and then explain them one by one:</p>
+
+<p><img style="width:550px" src="https://blog.robomongo.org/content/images/2016/08/crl.png"></p>
+
+<p><strong>CRL File</strong> (Blocking Revoked Client Certificates)</p>
+
+<p>In order to disallow client connections with revoked certificates, we use CRL (Certificate Revocation Lists) file (i.e. crl.pem) option on Robomongo. This file contains a list of revoked certificates. This option corresponds to <code>mongo --sslCRLFile</code> option.</p>
+
+<p><strong>Hostname Validation</strong></p>
+
+<p>Mongo verifies that the hostname of MongoDB server - to which the connection attempted - matches the CN or SAN of the MongoDB's PEM certificate file (<code>--sslPEMKeyFile</code>). If the hostname does not match the CN/SAN, mongo will fail to connect. It is possible (although not advised) to disable this validation with this option. This option corresponds to <code>mongo --sslAllowInvalidHostnames</code> option.</p>
+
+<p>On Robomongo, we use "Invalid Hostnames" option to allow/disallow invalid host names. </p>
+
+<h5 id="usingselfsignedcertificates">Using Self-signed Certificates</h5>
+
+<p>Let's start with an important suggestion from MongoDB documents for production uses of this option:</p>
+
+<blockquote>
+  <p>In general, avoid using self-signed certificates unless the network is trusted.</p>
+  
+  <p>For production use, your MongoDB deployment should use valid certificates generated and signed by a single certificate authority. </p>
+</blockquote>
+
+<p>Robomongo/MongoDB can use any valid SSL certificate issued by a certificate authority, or a self-signed certificate. If self-signed certificate is used, although the communications channel will be encrypted, there will be no validation of server identity. This configuration will prevent eavesdropping on the connection, however it will be vulnerable to a man-in-the-middle attack. Using a certificate signed by a trusted certificate authority will permit Robomongo/MongoDB to verify the server’s identity.</p>
+
+<p><img width="550" src="https://blog.robomongo.org/content/images/2016/08/self_signed_hdpi_MAC.png"></p>
+
+<p>The example configuration above corresponds to mongo shell parameter below:</p>
+
+<p><code>mongo --sslAllowInvalidCertificates</code></p>
+
+<h5 id="troubleshootingsslconnectionfailures">Troubleshooting SSL Connection Failures</h5>
+
+<p>Robomongo helps you with giving error details when SSL connection fails. This will save time since we will already have some idea about where to start investigation from.</p>
+
+<p>Let's explain this with a real example which can be seen below. Here we see the error is related to hostname mismatch; after a quick search (or even better, having read this blog), we find that mongo has a hostname validation feature. So we can start troubleshooting with learning more about MongoDB hostname validation rules. (Rule here is the hostname used in "Address" field on connection tab should be same as the hostname of the certificate used on SSL tab on Robomongo)</p>
+
+<p><img width="550" src="https://blog.robomongo.org/content/images/2016/08/errors.png"></p>
+
+<p><br>  </p>
+
+<h2 id="2mongodbatlassupport">2. MongoDB Atlas Support</h2>
+
+<p><img width="350" style="left:24%;" src="https://blog.robomongo.org/content/images/2016/08/atlas.png"> <br>
+<a href="https://www.mongodb.com/cloud">MongoDB Atlas</a> is a cloud service for running, monitoring, and maintaining MongoDB deployments, including the provisioning of dedicated servers for the MongoDB instances.</p>
+
+<p>After creating a new cluster on MongoD Atlas, you will be provided a similar connection string to connect your cluster:</p>
+
+<pre><code>mongo "mongodb://cluster0-shard-00-00-f8a5c.mongodb.net:27017,cluster0-shard-00-01-f8a5c.mongodb.net:27017,cluster0-shard-00-02-f8a5c.mongodb.net:27017/admin?replicaSet=Cluster0-shard-0" --ssl --username admin --password PASSWORD  
+</code></pre>
+
+<p>In the Robomongo screenshot below, an example is shown which connects to single server in replica set: <code>cluster0-shard-00-00-f8a5c.mongodb.net:27017</code></p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/08/ma-basic.png"> <br>
+<img width="500" src="https://blog.robomongo.org/content/images/2016/08/ma-auth.png"> <br>
+<img width="500" src="https://blog.robomongo.org/content/images/2016/08/ma-ssl.png"></p>
+
+<!--  
+<img src="/content/images/2016/08/win-hidpi-1.png" alt="" />
+-->
+
+<p><strong>Note</strong>: Currently Robomongo supports connection to single server of a replica set. Support for connection to <strong>Replica Sets</strong> is one of the most important features of next Robomongo release plan.</p>
+
+<p><br>  </p>
+
+<h2 id="3highdpienhancements">3. HighDPI Enhancements</h2>
+
+<p>In Robomongo RC10, for better High DPI support, we have implemented many fine-grained enhancements. And we have updated Robomongo to use latest Qt version Qt 5.7.</p>
+
+<p>Some of the visible enhancements can be seen in the screenshot below.</p>
+
+<p>Windows: <br>
+<img src="https://blog.robomongo.org/content/images/2016/08/win-hidpi.png" alt="">
+For Windows, it can be seen that icons look much better and text layout is also better handled on new Robomongo 0.9.0 RC10.</p>
+
+<p>Ubuntu 16.04:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/08/ubuntu.png" alt=""></p>
+
+<p>We see that with Robomongo RC10 the improvement is huge. </p>
+
+<p><strong>Note:</strong> On Ubuntu 16.04, there is a known issue related to Qt on high DPI screens where the issue is more noticeable after changing "Scale for menu and title bars" on Ubuntu display menu. We will publish a quick "How to" blog to solve this problem.</p>
+
+<h2 id="4otherhighlightsfromnewrelease">4. Other Highlights from New Release</h2>
+
+<ul>
+<li>For better security, we have updated our OpenSSL version to OpenSSL 1.0.1p which is the same version used by latest MongoDB 3.2.</li>
+<li>We have updated Qt from Qt 5.5 to latest Qt 5.7. With this update there are many enhancements including cross platform High DPI support.</li>
+</ul>
+
+<h2 id="roadmap">Roadmap</h2>
+
+<p>Our next major priority is to complete support for the most popular features:</p>
+
+<ul>
+<li>SSH &mdash; <span style="color: green">Implemented</span></li>
+<li>TLS/SSL &mdash; <span style="color: green">Implemented</span></li>
+<li>Replica Sets  &mdash; <span style="color: red">Planned for Next Release</span></li>
+<li>User Management &mdash; <span style="color: red">Planned for Next Release</span></li>
+</ul>
+
+<h2 id="download">Download</h2>
+
+<p>Download <a href="https://robomongo.org/download">Robomongo 0.9.0 RC10</a>, our best version of Robomongo.</p>
+
+<p>Enjoy! And... <a href="https://robomongo.org/buy">support us</a>! Together, let's push Robomongo to the sky!</p>
+
+<p><a href="https://robomongo.org/download"><img width="200" src="https://blog.robomongo.org/content/images/2016/08/roboribbon.png"></a></p>
+
+<p>Follow us on Twitter (<a href="https://twitter.com/robomongo">@robomongo</a>) to be notified about future releases. Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub tracker</a>. </p>]]></content:encoded></item><item><title><![CDATA[Robomongo RC9]]></title><description><![CDATA[<p>We are happy to announce new version: Robomongo 0.9.0 RC9! </p>
+
+<h2 id="collectionadvancedoptions">Collection advanced options</h2>
+
+<p>With this version of Robomongo you can specify all configuration options for newly created collections. We support major MongoDB versions 3.2, 3.0, 2.6 and storage engine types: WiredTiger and MMAPV1.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/05/options_3.png" alt=""></p>
+
+<p>Based on</p>]]></description><link>https://blog.robomongo.org/robomongo-rc9/</link><guid isPermaLink="false">27da3045-04c6-42e4-8044-b634ed338e60</guid><dc:creator><![CDATA[Gokhan Simsek]]></dc:creator><pubDate>Wed, 01 Jun 2016 16:18:22 GMT</pubDate><content:encoded><![CDATA[<p>We are happy to announce new version: Robomongo 0.9.0 RC9! </p>
+
+<h2 id="collectionadvancedoptions">Collection advanced options</h2>
+
+<p>With this version of Robomongo you can specify all configuration options for newly created collections. We support major MongoDB versions 3.2, 3.0, 2.6 and storage engine types: WiredTiger and MMAPV1.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/05/options_3.png" alt=""></p>
+
+<p>Based on storage engine or MongoDB version, Robomongo assists you:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/05/smart-ui-1.png" alt=""></p>
+
+<p>In advanced view, four new tabs can be used to configure capped collection &amp; user flags, storage engine, validator and index option defaults.</p>
+
+<p>You can specify configuration to the storage engine for collection (requires MongoDB 3.0 and WiredTiger engine):</p>
+
+<p><img width="515" left="500" src="https://blog.robomongo.org/content/images/2016/05/storage-options.png"></p>
+
+<p>Specify validation rules or expressions for the collection (requires MongoDB 3.2):</p>
+
+<p><img width="750" src="https://blog.robomongo.org/content/images/2016/05/validation-1.png"></p>
+
+<p>Specify a default configuration for indexes (requires MongoDB 3.2): </p>
+
+<p><img width="515" src="https://blog.robomongo.org/content/images/2016/05/index-options.png"></p>
+
+<p><br>  </p>
+
+<h2 id="sshenhancement">SSH enhancement</h2>
+
+<p>Previous version of Robomongo was failing when connecting via SSH to the newest versions of operating systems (for instance, Ubuntu 16.04 and OS X El Capitan):</p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/05/error.png"></p>
+
+<p>This issue is solved in Robomongo 0.9 RC9. The root cause of the problem is that starting from OpenSSH 6.9, support for the 1024-bit <code>diffie-hellman-group1-sha1</code> key exchange is disabled by default. We have updated Robomongo SSH support to make it compatible with OpenSSH 6.9 or later versions.</p>
+
+<p>For more information: <br>
+OpenSSH 6.9 Release Notes <br>
+<a href="http://www.openssh.com/txt/release-6.9">http://www.openssh.com/txt/release-6.9</a></p>
+
+<p><br>  </p>
+
+<h2 id="importedconnectionsettings">Imported connection settings</h2>
+
+<p>Connection settings from previous versions of Robomongo are now automatically imported. Connections with the same parameters will not be imported.</p>
+
+<p><img width="790" src="https://blog.robomongo.org/content/images/2016/06/imported.png"></p>
+
+<p>Imported connections are marked with a grey icon. If you don't need some of them — simply remove them.</p>
+
+<p>As a reminder, here are the locations of config files for different versions of Robomongo:</p>
+
+<table>  
+  <tr>
+    <th></th>
+    <th>Mac OS X / Linux</th>
+  </tr>
+  <tr>
+    <td>Robomongo 0.8.x</td>
+    <td><code>~/.config/robomongo/robomongo.json</code></td>
+  </tr>
+  <tr>
+    <td>Robomongo 0.9.x</td>
+    <td><code>~/.config/robomongo/0.9/robomongo.json</code></td>
+  </tr>
+</table>
+
+<table>  
+  <tr>
+    <th></th>
+    <th>Windows</th>
+  </tr>
+  <tr>
+    <td>Robomongo 0.8.x</td>
+    <td><code>%HOME%/.config/robomongo/robomongo.json</code></td>
+  </tr>
+  <tr>
+    <td>Robomongo 0.9.x</td>
+    <td><code>%HOME%/.config/robomongo/0.9/robomongo.json</code></td>
+  </tr>
+</table>
+
+<p><br>  </p>
+
+<h2 id="uuidhelpers">UUID helpers</h2>
+
+<p>Support for querying documents by UUIDs is added, both in legacy and new encoding. MongoDB stores UUIDs as binary data with subtypes <code>3</code> (legacy encoding) and <code>4</code> (new encoding). New applications should use new encoding, but sometimes we still need to query documents, with values encoded in legacy UUID. </p>
+
+<p>We added 5 helper functions that you can use when building your scripts: </p>
+
+<pre><code class="language-js">  UUID("...")  =&gt;  BinData(4, "...") 
+ LUUID("...")  =&gt;  BinData(3, "...") legacy UUID in unspecified encoding
+ NUUID("...")  =&gt;  BinData(3, "...") in .NET GUID encoding
+ JUUID("...")  =&gt;  BinData(3, "...") in Java UUID encoding
+PYUUID("...")  =&gt;  BinData(3, "...") in Python UUID encoding  
+</code></pre>
+
+<p>Here is how you can query documents based on legacy .NET UUID encoding:</p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2016/05/uuid-1.png"></p>
+
+<p>Here is how you can query documents based on legacy Java UUID encoding:</p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2016/05/juuid.png"></p>
+
+<p>Because UUID in legacy encoding (subtype <code>3</code>) is deprecated by BSON specification, we decided to overwrite built-in function <code>UUID(...)</code> to create unique identifiers in new encoding (subtype <code>4</code>). If you want old behaviour, add the following line to your <code>~/.robomongorc.js</code> file:</p>
+
+<pre><code>UUID = oldUUID  
+</code></pre>
+
+<p>Or use oldUUID(...) function explicitly.</p>
+
+<p><br>  </p>
+
+<h2 id="sizeandpositionofmainwindow">Size and position of main window</h2>
+
+<p>Main window size and position will be saved and restored next time Robomongo opened. Also we save size of "Connections" and "Create Collection" dialogs. We are planning to implement the same functionality for the rest of dialogs and windows in the future versions.</p>
+
+<p><br>  </p>
+
+<h2 id="roadmap">Roadmap</h2>
+
+<p>Our major priority towards final version is the support for the most popular protocols:</p>
+
+<ul>
+<li>SSH &mdash; <span style="color: green">Implemented</span></li>
+<li>TLS/SSL &mdash; <span style="color: red">Will be implemented</span></li>
+</ul>
+
+<p>We are already working on SSL feature for the next release. Besides this feature, Robomongo will receive other fixes and improvements until it hits 0.9 Final. </p>
+
+<h2 id="download">Download</h2>
+
+<p>Download <a href="https://robomongo.org/download">Robomongo 0.9.0 RC9</a>, our best version of Robomongo.</p>
+
+<p>Enjoy! And... <a href="https://robomongo.org/buy">support us</a>! Together, let's push Robomongo to the sky!</p>
+
+<p><a href="https://robomongo.org/download"><img width="200" src="https://blog.robomongo.org/content/images/2016/06/roboteddy.png"></a></p>
+
+<p>Follow us on Twitter (<a href="https://twitter.com/robomongo">@robomongo</a>) to be notified about future releases. Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub tracker</a>. </p>]]></content:encoded></item><item><title><![CDATA[Robomongo RC8]]></title><description><![CDATA[<p>We are happy to announce 0.9.0 RC8 version of Robomongo! </p>
+
+<h2 id="sshprotocol">SSH protocol</h2>
+
+<p>Support for SSH protocol is completely re-implemented and includes many improvements. </p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/ssh-tab.png"></p>
+
+<p>Nobody was very much happy with the implementation in version 0.8. It was implemented surprisingly badly in all cases :) Many issues were <a href="https://github.com/paralect/robomongo/issues?utf8=%E2%9C%93&amp;q=is%3Aissue+is%3Aopen+ssh">reported</a> and</p>]]></description><link>https://blog.robomongo.org/robomongo-rc8/</link><guid isPermaLink="false">67537354-adc4-42f9-b4fa-1e7bcc22860c</guid><dc:creator><![CDATA[Dmitry Schetnikovich]]></dc:creator><pubDate>Thu, 14 Apr 2016 12:18:00 GMT</pubDate><content:encoded><![CDATA[<p>We are happy to announce 0.9.0 RC8 version of Robomongo! </p>
+
+<h2 id="sshprotocol">SSH protocol</h2>
+
+<p>Support for SSH protocol is completely re-implemented and includes many improvements. </p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/ssh-tab.png"></p>
+
+<p>Nobody was very much happy with the implementation in version 0.8. It was implemented surprisingly badly in all cases :) Many issues were <a href="https://github.com/paralect/robomongo/issues?utf8=%E2%9C%93&amp;q=is%3Aissue+is%3Aopen+ssh">reported</a> and some design decision were erroneous. For instance, multiple SSH connections were created for each tab to the same SSH server. </p>
+
+<p>Robomongo now creates a single SSH connection and uses it as a tunnel for all opened tabs. This improves opening of the new shell tab up to 4x faster.</p>
+
+<p>Besides visible improvements, current implementation is completely independent from MongoDB source code. It will allow us to release new version of Robomongo for the upcoming MongoDB 3.4 as quick as possible.</p>
+
+<p>If you experience any problem with SSH connection, please read "Error handling and reporting" section below.</p>
+
+<h4 id="security">Security</h4>
+
+<p>If you are serious about security, check "Ask for passphrase each time" in order to prevent Robomongo to store your password as a plain text into the config file (issue <a href="https://github.com/paralect/robomongo/issues/609">#609</a>):</p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/ssh-ask.png"></p>
+
+<p>You will be prompted for the password or passphrase each time new connection is initiated:</p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/ssh-ask-dialog.png"></p>
+
+<p>In the future versions we are planning to improve security in the following ways:</p>
+
+<ol>
+<li>Sensitive information will be encrypted in Robomongo config file  </li>
+<li>Support for SSH agents will be implemented</li>
+</ol>
+
+<h4 id="currentlimitations">Current limitations</h4>
+
+<ol>
+<li>Password and passphrase are stored as plain text in config file. You are <b>encouraged</b> to use "Ask for password/passphrase" instead.  </li>
+<li>When the connection with SSH server drops, automatic reconnection is not performed. You need to manually disconnect and reopen all tabs. We will address this limitation in the future versions.  </li>
+<li>Data between Robomongo and SSH server is not zipped. We are planning to implement this feature in the next versions. This will allow us to improve performance of SSH connection for slow networks.</li>
+</ol>
+
+<p><br>  </p>
+
+<h2 id="connectiondiagnostic">Connection Diagnostic</h2>
+
+<p>When you are creating new connection to MongoDB, there is a "Test" button at the bottom left corner which allows to test connection:  </p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/test.png"></p>
+
+<p>In RC8 we have completely re-implemented this functionality. Also, it now shows diagnostic  information about SSH connection:</p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/test-trying.png"></p>
+
+<p>When some errors are found, you will know the exact reason of the problem:</p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/test-failed.png"></p>
+
+<p>If you need more details about the error, click on "Show error details" link at the bottom left of the dialog. </p>
+
+<p>When connection is successful, you'll see the following:</p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/test-completed.png"></p>
+
+<p><br>  </p>
+
+<h2 id="explorerimprovements">Explorer improvements</h2>
+
+<p>Database Explorer received several fixes and improvements.  </p>
+
+<p><img width="600" src="https://blog.robomongo.org/content/images/2016/04/explorer-previous-4.png"></p>
+
+<p>Robomongo is sorry for that behaviour! In the RC8 all these issues were fixed.</p>
+
+<p><br>  </p>
+
+<h2 id="errorhandlingandreporting">Error handling and reporting</h2>
+
+<p>In this version we pay much more attention to both error handling and detailed reporting of the problem to you. Previously Robomongo may report that "list of users cannot be loaded", but without any clue on what went wrong. In RC8 we show you exact information that we have about the error:</p>
+
+<p><img width="350" src="https://blog.robomongo.org/content/images/2016/04/detailed-reporting.png"></p>
+
+<p>Message "field not found, expected type 7" is mostly useless to most of us, but this is what was reported by MongoDB client library and we are now showing this information.</p>
+
+<p>We are moving towards complete re-implementation of logging and error reporting. This is partially implemented for  the SSH sub-module. If you experience any problem with SSH connection, hold <code>Shift</code> key when you are clicking <code>Connect</code> button: </p>
+
+<p><img width="550" src="https://blog.robomongo.org/content/images/2016/04/connect.png"></p>
+
+<p>Log panel will automatically open with the very detailed log of all operations performed by Robomongo's SSH sub-module:</p>
+
+<p><img width="550" src="https://blog.robomongo.org/content/images/2016/04/logs.png"></p>
+
+<p>This "feature" is intended for debug needs and is not suited for the regular users. Still, we will ask you to enter such debug mode and show us the logs when you'll encounter any problem with SSH connection. Sensitive information, such as passwords and passphrases, is never logged by Robomongo. </p>
+
+<p>We are planning to enable such detailed logging for all parts of Robomongo. This will allow us to improve our level of support and eventually will lead to higher quality of the application.  </p>
+
+<p>Tip: <code>Shift + Enter</code> when in Connections Dialog will also do the same trick.</p>
+
+<p><br>  </p>
+
+<h2 id="stabilityincaseofnetworkpartitioning">Stability in case of network partitioning</h2>
+
+<p>Version RC8 is unique in the way that it was tested with network cable unplugged (and unexpectedly unplugged in the middle of the network operation). Several critical errors were found that lead to application crash. All found issues were fixed. </p>
+
+<p>In most such cases now you'll see the following message:</p>
+
+<p><img width="400" src="https://blog.robomongo.org/content/images/2016/04/detailed-error.png"></p>
+
+<p><br>  </p>
+
+<h2 id="fixedscripteditorflickering">Fixed script editor flickering</h2>
+
+<p>If you use Robomongo on Mac or Linux you probably noticed that script editor flickering when you adding new line. Here is a slow motion of this behaviour: </p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/flickering-3.gif"></p>
+
+<p>This issue is now fixed:</p>
+
+<p><img width="500" src="https://blog.robomongo.org/content/images/2016/04/no-flickering.gif"></p>
+
+<p><br>  </p>
+
+<h2 id="otherimprovements">Other improvements</h2>
+
+<ol>
+<li>Fixed bug of incorrect conversion of double '0.0' to int '0' when editing document <a href="https://github.com/paralect/robomongo/issues/1069">#1069</a>  </li>
+<li>Fixed crash when "Copy JSON" an object within an array <a href="https://github.com/paralect/robomongo/issues/1074">#1074</a>  </li>
+<li>Fixed problem with Document Editor dialog which only opens on main display (when you have multi-monitor setup) <a href="https://github.com/paralect/robomongo/issues/1063">#1063</a>  </li>
+<li>Auto-completion for database collection names is now cached. It will improve responsiveness of suggestions.  </li>
+<li>SSH implementation now respects DNS settings at the end of the tunnel <a href="https://github.com/paralect/robomongo/issues/686">#686</a>  </li>
+<li>SSH settings now understand <code>~</code> symbol for Private Key file and will expand it to your home directory.</li>
+</ol>
+
+<p><br>  </p>
+
+<h2 id="roadmap">Roadmap</h2>
+
+<p>Our major priority towards final version is support for the most popular Authentication Mechanisms:</p>
+
+<ul>
+<li>SCRAM-SHA-1 &mdash; <span style="color: green">Implemented</span></li>
+<li>MONGODB-CR &mdash; <span style="color: green">Implemented</span></li>
+<li>x.509 &mdash; <span style="color: red">Not implemented</span></li>
+</ul>
+
+<p>And support for the most popular protocols:</p>
+
+<ul>
+<li>SSH &mdash; <span style="color: green">Implemented</span></li>
+<li>TLS/SSL &mdash; <span style="color: red">Not implemented</span></li>
+</ul>
+
+<p>Support for x.509/SSL will be part of the next releases. Besides this feature, Robomongo will receive many fixes and improvements until it hits 0.9.0 Final. </p>
+
+<h2 id="download">Download</h2>
+
+<p>Download <a href="https://robomongo.org/download">Robomongo 0.9.0 RC8</a>, our best version of Robomongo.</p>
+
+<p>Enjoy! And... <a href="https://robomongo.org/buy">support us</a>! Together, let's push Robomongo to the sky!</p>
+
+<p><a href="https://robomongo.org/download"><img width="200" src="https://blog.robomongo.org/content/images/2016/04/sky.png"></a></p>
+
+<p>Follow us on Twitter (<a href="https://twitter.com/robomongo">@robomongo</a>) to be notified about future releases. Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub tracker</a>. </p>]]></content:encoded></item><item><title><![CDATA[Robomongo RC7]]></title><description><![CDATA[<p><a href="https://robomongo.org/download">Robomongo RC7</a> is out with several improvements.</p>
+
+<h2 id="errorreporting">Error reporting</h2>
+
+<p>We fixed critical issue in handling of JavaScript exceptions (<a href="https://github.com/paralect/robomongo/issues/1035">#1035</a>). Before RC7 only syntax errors are shown, but JavaScript exceptions were not reported at all. This is now fixed:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2016/03/error-1.png"></p>
+
+<p>Robomongo RC7 shows exactly the same error message as a stock MongoDB</p>]]></description><link>https://blog.robomongo.org/robomongo-rc7/</link><guid isPermaLink="false">00fbaf14-9637-4157-b243-df39e0cd34fa</guid><dc:creator><![CDATA[Dmitry Schetnikovich]]></dc:creator><pubDate>Fri, 04 Mar 2016 15:29:26 GMT</pubDate><content:encoded><![CDATA[<p><a href="https://robomongo.org/download">Robomongo RC7</a> is out with several improvements.</p>
+
+<h2 id="errorreporting">Error reporting</h2>
+
+<p>We fixed critical issue in handling of JavaScript exceptions (<a href="https://github.com/paralect/robomongo/issues/1035">#1035</a>). Before RC7 only syntax errors are shown, but JavaScript exceptions were not reported at all. This is now fixed:</p>
+
+<p><img width="800" src="https://blog.robomongo.org/content/images/2016/03/error-1.png"></p>
+
+<p>Robomongo RC7 shows exactly the same error message as a stock MongoDB 3.2 shell (without some logging metadata). For comparison, here is an output of the <code>mongo</code> shell for the same script:</p>
+
+<pre><code>2016-03-04T17:48:00.066+0300 E QUERY    [thread1] Error: Role name for getRole shell helper must be a string :  
+DB.prototype.getRole@src/mongo/shell/db.js:1566:1  
+@(shell):1:1
+</code></pre>
+
+<p>Prefix <code>2016-03-04T17:48:00.066+0300 E QUERY    [thread1]</code> is not shown in Robomongo, but we are planning to make it configurable.</p>
+
+<h2 id="logspanel">Logs panel</h2>
+
+<p>We restored Logs panel. Now it shows all your queries and additional information:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/03/logs.png" alt=""></p>
+
+<h2 id="confirmationonclose">Confirmation on close</h2>
+
+<p>When you close <code>Edit Document</code> window with unsaved changes, you will be warned about it:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/03/confirmation.png" alt=""></p>
+
+<p>This feature was implemented by <a href="https://github.com/synthomat">Anton Zering</a>. Thank you, Anton!</p>
+
+<p><strong>Tip:</strong> Use <code>ESC</code> key to close this window. </p>
+
+<h2 id="betterdocumentbrowsing">Better document browsing</h2>
+
+<p>Sometimes you just need to quickly list documents in a collections. The quickest way to do this is to double click on a collection in a left sidebar. Sadly, but before Robomongo RC7 it also opens tree item and very soon your sidebar will be cluttered with expanded collection nodes and will look like this:</p>
+
+<p><img width="300" src="https://blog.robomongo.org/content/images/2016/03/cluttered.png"></p>
+
+<p>We solved this issue in RC7 and now your sidebar will always look compact (unless you really need to explore additional collection properties, like indexes):</p>
+
+<p><img width="300" src="https://blog.robomongo.org/content/images/2016/03/collections.png"></p>
+
+<p><strong>Tip:</strong> you also can press <code>Enter</code> when you have a focus on a collection in a sidebar for the same functionality.</p>
+
+<h2 id="easierrecursiveexpandingandcollapsing">Easier recursive expanding and collapsing</h2>
+
+<p>This is a minor but handy improvement implemented by our active community member <a href="https://github.com/synthomat">Anton Zering</a>. You now can use  <code>Alt + Right</code> (or <code>Option + Right</code> on Mac) to recursively expand document node. It works for nested documents also.</p>
+
+<p><img width="700" src="https://blog.robomongo.org/content/images/2016/03/expand.png"></p>
+
+<p>To collapse recursively, press <code>Alt + Left</code> (or <code>Option + Left</code> on Mac). Keys <code>Left</code> and <code>Right</code> also collapse/expand documents, but not recursively.</p>
+
+<p>Enjoy!</p>
+
+<p>Follow us on Twitter (<a href="https://twitter.com/robomongo">@robomongo</a>) to be notified about future releases. Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub tracker</a>.</p>]]></content:encoded></item><item><title><![CDATA[Robomongo and IPv6 protocol]]></title><description><![CDATA[<p><a href="https://robomongo.org">Robomongo RC6</a> now supports IPv6 protocal: </p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/02/list.png" alt=""></p>
+
+<p>You can specify IPv6 address with or without square brackets. The following IPv6 addresses are equally valid and are the same for Robomongo:</p>
+
+<pre><code>[fe80::601:9bff:feab:ec01]
+fe80::601:9bff:feab:ec01  
+</code></pre>
+
+<p><img width="600" src="https://blog.robomongo.org/content/images/2016/02/edit.png"></p>
+
+<p>Colon (<code>:</code>) characters in IPv6 addresses may conflict with the established syntax</p>]]></description><link>https://blog.robomongo.org/ipv6-protocol/</link><guid isPermaLink="false">572d7cc4-7d81-48ef-ade9-c687b7db5283</guid><dc:creator><![CDATA[Dmitry Schetnikovich]]></dc:creator><pubDate>Sat, 13 Feb 2016 13:52:55 GMT</pubDate><content:encoded><![CDATA[<p><a href="https://robomongo.org">Robomongo RC6</a> now supports IPv6 protocal: </p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/02/list.png" alt=""></p>
+
+<p>You can specify IPv6 address with or without square brackets. The following IPv6 addresses are equally valid and are the same for Robomongo:</p>
+
+<pre><code>[fe80::601:9bff:feab:ec01]
+fe80::601:9bff:feab:ec01  
+</code></pre>
+
+<p><img width="600" src="https://blog.robomongo.org/content/images/2016/02/edit.png"></p>
+
+<p>Colon (<code>:</code>) characters in IPv6 addresses may conflict with the established syntax of resource identifiers, such as URIs and URLs. The colon has traditionally been used to terminate the host path before a port number. To alleviate this conflict, Robomongo encloses literal IPv6 addresses in square brackets in such resource identifiers. </p>
+
+<p>This rule is not something that Robomongo or MongoDB has chosen for URLs with IPv6 address. According to <a href="http://www.ietf.org/rfc/rfc3986.txt">RFC 3986</a>, section 3.2.2:</p>
+
+<blockquote>
+  <p>A host identified by an Internet Protocol literal address, version 6 [RFC3513] or later, is distinguished by enclosing the IP literal within square brackets ("[" and "]").  This is the only place where square bracket characters are allowed in the URI syntax.  In anticipation of future, as-yet-undefined IP literal address formats, an implementation may use an optional version flag to indicate such a format explicitly rather than rely on heuristic determination.</p>
+</blockquote>
+
+<p>That is why Robomongo will always use "square brackets" syntax for IPv6 addresses in UI:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/02/ui.png" alt=""></p>
+
+<p>Actually, MongoDB shell requires to use square brackets for IPv6 address even when there is no ambiguity:</p>
+
+<pre><code>mongo --ipv6 --host "[fe80::601:9bff:feab:ec01]" --port 2701  
+</code></pre>
+
+<p>You can connect to the same instance of MongoDB with a shorter command. In this case square brackets is the only way to distinguish between IPv6 address parts and port number:  </p>
+
+<pre><code>mongo --ipv6 "[fe80::601:9bff:feab:ec01]:2701"  
+</code></pre>
+
+<h2 id="mongodbconnectionstring">MongoDB Connection String</h2>
+
+<p>In the next versions of Robomongo we will add support for <a href="https://docs.mongodb.org/manual/reference/connection-string/">MongoDB Connection String</a> format. Just for your convenience we will show here how connection string should look when you work with IPv6 addresses:</p>
+
+<pre><code>mongodb://[fe80::601:9bff:feab:ec01]:2801,[fe80::601:9bff:feab:ec02]:2802/?replicaSet=test  
+</code></pre>
+
+<p>Enjoy!</p>
+
+<p>Please submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub tracker</a>.</p>]]></content:encoded></item><item><title><![CDATA[Campaign is over, Robomongo is not :)]]></title><description><![CDATA[<p>We are so grateful for the support received during our <a href="http://indiegogo.com/projects/save-robomongo">Indiegogo campaign</a>. We've got hundreds of emails asking us to continue improving and supporting Robomongo. We have not reached our goal, but we are still proud. We know for sure that there are a lot of people who love what</p>]]></description><link>https://blog.robomongo.org/campaign-is-over-robomongo-is-not/</link><guid isPermaLink="false">b4d78787-8207-4e1b-89dc-12dcdc1b464c</guid><dc:creator><![CDATA[Dmitry Schetnikovich]]></dc:creator><pubDate>Mon, 08 Feb 2016 15:58:08 GMT</pubDate><media:content url="https://blog.robomongo.org/content/images/2016/02/cover2-2.jpg" medium="image"/><content:encoded><![CDATA[<img src="https://blog.robomongo.org/content/images/2016/02/cover2-2.jpg" alt="Campaign is over, Robomongo is not :)"><p>We are so grateful for the support received during our <a href="http://indiegogo.com/projects/save-robomongo">Indiegogo campaign</a>. We've got hundreds of emails asking us to continue improving and supporting Robomongo. We have not reached our goal, but we are still proud. We know for sure that there are a lot of people who love what we do and are always ready to help. 614 backers from 64 different countries donated to Save Robomongo. This is amazing!</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/02/team.jpg" alt="Campaign is over, Robomongo is not :)"></p>
+
+<p>We were thinking much and talking to a lot of people during this campaign. We've got a lot of ideas, including offers to create commercial distribution and limit functionality in community version. We don't want to do that. We still want Robomongo to be free and open source. </p>
+
+<p>We came up with the following plan. We are going to sell <a href="https://robomongo.org/buy">subscriptions</a> for Robomongo beginning from February 8. The subscription allows you to download a new version of Robomongo as soon as it is released and to get a commercial support from our team. There are a lot of additional benefits planned for paid customers and we will soon announce them gradually. Robomongo is still going to be free for the entire community with the only one limitation: you'll have to wait for 20 days until you can download the latest release. If you don't want to wait &mdash; you can always build Robomongo from sources. It's an open-source, in any way.</p>
+
+<p>Today we have a new goal set for us: we are on the way to create a high-quality open-source product with a strong commercial support.</p>
+
+<p>As was <a href="http://blog.robomongo.org/robomongo-future/">promised</a> at the beginning of the campaign, we will return all Magic Backlog donations, if you ask us to. Please write to us on <a href="https://blog.robomongo.org/campaign-is-over-robomongo-is-not/">robomongo@paralect.com</a> and we will keep our promise in a couple of days.</p>
+
+<h1 id="robomongo090rc5">Robomongo 0.9.0 RC5</h1>
+
+<p>In our <a href="https://robomongo.org/download">newest release</a> we removed advertisement about this campaign. Robomongo is now completely ad-free.</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/02/rc5.png" alt="Campaign is over, Robomongo is not :)"></p>
+
+<p>We are recharged and full of energy to continue development of Robomongo! Thank you again!</p>
+
+<p><img width="200" src="https://blog.robomongo.org/content/images/2016/01/enjoy.png" alt="Campaign is over, Robomongo is not :)"></p>
+
+<p><a href="https://robomongo.org">Enjoy Robomongo!</a></p>]]></content:encoded></item><item><title><![CDATA[Robomongo 0.9.0 RC4]]></title><description><![CDATA[<p>New version of Robomongo released today. In this version we added support for MongoDB Authentication Mechanisms (SCRAM-SHA-1 and MONGODB-CR) and improved support for direct connection to Replica Set members.</p>
+
+<p><br>  </p>
+
+<h2 id="spanstylebackgroundcolor373f46nbspspanstylecolorwhitemongospanspanstylecolorf7c121labspanspannbspisawesome"><span style="background-color:#373f46;">&nbsp;<span style="color:white;">Mongo</span><span style="color: #f7c121;">Lab</span> </span>&nbsp;is awesome!</h2>
+
+<p><a href="https://mongolab.com">MongoLab</a>, managed cloud database service, will <a href="http://blog.mongolab.com/2016/02/help-save-robomongo-with-your-donation/">match all donations</a> starting now for a total of</p>]]></description><link>https://blog.robomongo.org/robomongo-rc4/</link><guid isPermaLink="false">d7a5d7d8-e13c-4a82-9665-5fae38ebe46e</guid><dc:creator><![CDATA[Dmitry Schetnikovich]]></dc:creator><pubDate>Mon, 01 Feb 2016 19:44:41 GMT</pubDate><media:content url="https://blog.robomongo.org/content/images/2016/02/bg-1.jpg" medium="image"/><content:encoded><![CDATA[<img src="https://blog.robomongo.org/content/images/2016/02/bg-1.jpg" alt="Robomongo 0.9.0 RC4"><p>New version of Robomongo released today. In this version we added support for MongoDB Authentication Mechanisms (SCRAM-SHA-1 and MONGODB-CR) and improved support for direct connection to Replica Set members.</p>
+
+<p><br>  </p>
+
+<h2 id="spanstylebackgroundcolor373f46nbspspanstylecolorwhitemongospanspanstylecolorf7c121labspanspannbspisawesome"><span style="background-color:#373f46;">&nbsp;<span style="color:white;">Mongo</span><span style="color: #f7c121;">Lab</span> </span>&nbsp;is awesome!</h2>
+
+<p><a href="https://mongolab.com">MongoLab</a>, managed cloud database service, will <a href="http://blog.mongolab.com/2016/02/help-save-robomongo-with-your-donation/">match all donations</a> starting now for a total of up to <strong>$15,000</strong>.  </p>
+
+<blockquote>
+  <p>We recently learned that the team behind <a href="http://robomongo.org/">Robomongo</a>, a free and open source MongoDB admin GUI, are in need of funds to keep the project going. The project, which has over 3,622 stargazers on <a href="https://github.com/paralect/robomongo">GitHub</a>, is a valuable free tool for the MongoDB community. We know that many of you, our customers, use and love Robomongo, so let’s try and help them!</p>
+  
+  <p>The Robomongo team is currently <a href="https://www.indiegogo.com/projects/save-robomongo">fundraising on Indiegogo</a>. To help support them, we’re announcing that MongoLab will match all donations starting now for a total of up to $15,000. Donate now and help save <a href="http://robomongo.org/">Robomongo</a>!</p>
+</blockquote>
+
+<p>Thank you, MongoLab!  </p>
+
+<p><br>  </p>
+
+<h2 id="supportforauthenticationmechanisms">Support for Authentication Mechanisms</h2>
+
+<p>This version of Robomongo allows to specify authentication mechanism. We now support two types:</p>
+
+<ol>
+<li><a href="https://docs.mongodb.org/manual/core/security-scram-sha-1">SCRAM-SHA-1</a>  </li>
+<li><a href="https://docs.mongodb.org/manual/core/security-mongodb-cr">MONGODB-CR</a></li>
+</ol>
+
+<p><a href="http://robomongo.org"><img width="600" src="https://blog.robomongo.org/content/images/2016/02/auth-1.png" alt="Robomongo 0.9.0 RC4"></a></p>
+
+<p>Support for x.509 Certificate Authentication is planned for future versions.</p>
+
+<p>If you are connecting to MongoDB 2.6 or earlier, use <code>MONGODB-CR</code> mechanism, because <code>SCRAM-SHA-1</code> is only available for MongoDB 3.0 or newer.</p>
+
+<p><br>  </p>
+
+<h2 id="directconnectiontoreplicasetmembers">Direct connection to Replica Set members</h2>
+
+<p>In previous versions of Robomongo, it wasn't possible to connect directly to Replica Set member. In this version it is possible and supported. </p>
+
+<h4 id="connectiontoprimarymember">Connection to <code>PRIMARY</code> member</h4>
+
+<p>If you'll connect to <code>PRIMARY</code> member, you will be able to write data to database. Changes will automatically propagate to your <code>SECONDARY</code> members.</p>
+
+<h4 id="connectiontosecondarymember">Connection to <code>SECONDARY</code> member</h4>
+
+<p>If you'll connect to <code>SECONDARY</code> member, you'll be able to view list of collections and operate in read-only mode. All required options to make this happen will be automatically set (i.e. <code>slaveOk</code> for all read operations). You do not need to configure anything for this.</p>
+
+<p><br>  </p>
+
+<h1 id="download">Download</h1>
+
+<ol>
+<li><a href="http://download.robomongo.org/0.9.0-rc4/windows/robomongo-0.9.0-rc4-windows-x86_64-8c830b6.exe">Robomongo 0.9.0 RC4 for Windows</a> (x86_64).  </li>
+<li><a href="http://download.robomongo.org/0.9.0-rc4/osx/robomongo-0.9.0-rc4-darwin-x86_64-8c830b6.dmg">Robomongo 0.9.0 RC4 for Mac OS X</a> (x86_64)  </li>
+<li><a href="http://download.robomongo.org/0.9.0-rc4/linux/robomongo-0.9.0-rc4-linux-x86_64-8c830b6.tar.gz">Robomongo 0.9.0 RC4 for Linux</a> (x86_64)</li>
+</ol>
+
+<p><br>  </p>
+
+<h1 id="whatsnext">What's next?</h1>
+
+<p>With direct connection to Replica Set members you can do many types of database management tasks, still there is a downside of a direct connection: when topology of your replica set changes, you can find that you are not connected to <code>PRIMARY</code> anymore and currently operate on <code>SECONDARY</code> or vise versa. </p>
+
+<p>We are very close to complete implementation of "sticky" connection to replica set members. In this case you'll be prompted for a list of servers, instead of a single one. And Robomongo, with the help of MongoDB driver, will automatically reconnect to <code>PRIMARY</code> on every election of new <code>PRIMARY</code> member.</p>
+
+<p>Expect this feature to be ready with RC5 release. </p>
+
+<p><br>  </p>
+
+<h1 id="thankyou">Thank you!</h1>
+
+<p>Thank you to everyone who enjoy to use Robomongo as we do!</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/02/fun2.jpg" alt="Robomongo 0.9.0 RC4"></p>
+
+<p>Please, submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub tracker</a>.</p>]]></content:encoded></item><item><title><![CDATA[Robomongo 0.9.0 RC3 released]]></title><description><![CDATA[<p><strong>Update:</strong> New version released, <a href="http://blog.robomongo.org/robomongo-rc4">Robomongo 0.9.0 RC4</a>.  </p>
+
+<p>During work on this release candidate we have solved number of the most annoying problems of version 0.8.5. Among them are fixes for incorrect handling of the floating-point numbers and BSON arrays.</p>
+
+<p>More details you can find below.</p>
+
+<h2 id="floatingpointprecision">Floating-point</h2>]]></description><link>https://blog.robomongo.org/robomongo-0-9-0-rc3-released/</link><guid isPermaLink="false">b61509dd-0f52-463b-a624-03c43a60ee58</guid><dc:creator><![CDATA[Dmitry Schetnikovich]]></dc:creator><pubDate>Fri, 29 Jan 2016 14:40:50 GMT</pubDate><media:content url="https://blog.robomongo.org/content/images/2016/01/grrrc3.jpg" medium="image"/><content:encoded><![CDATA[<img src="https://blog.robomongo.org/content/images/2016/01/grrrc3.jpg" alt="Robomongo 0.9.0 RC3 released"><p><strong>Update:</strong> New version released, <a href="http://blog.robomongo.org/robomongo-rc4">Robomongo 0.9.0 RC4</a>.  </p>
+
+<p>During work on this release candidate we have solved number of the most annoying problems of version 0.8.5. Among them are fixes for incorrect handling of the floating-point numbers and BSON arrays.</p>
+
+<p>More details you can find below.</p>
+
+<h2 id="floatingpointprecision">Floating-point precision</h2>
+
+<p>In Robomongo 0.8.5, floating-point numbers are displayed with incorrect precision:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/01/incorrect-tree-1.png" alt="Robomongo 0.9.0 RC3 released"></p>
+
+<p>Such wrong representation can lead to a possibility of unintended overwriting a document with wrong values:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/01/incorrect-text-1.png" alt="Robomongo 0.9.0 RC3 released"></p>
+
+<p>Robomongo 0.9.0 RC3 handles floating-point numbers correctly:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/01/correct.png" alt="Robomongo 0.9.0 RC3 released"></p>
+
+<p>Also you can notice, that we have returned back the distinct icon for <code>Double</code> types. Integer and floating-point numbers now have different icons:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/01/icons-1.png" alt="Robomongo 0.9.0 RC3 released"></p>
+
+<h2 id="handlingofarrays">Handling of arrays</h2>
+
+<p>There are a lot of MongoDB shell functions that return array, instead of a single JavaScript object. For instance, <code>db.collection.getIndexes()</code> returns an array of indexes for particular a collection. While <code>db.collection.find()</code> returns <code>DBQuery</code> cursor. Previous versions of Robomongo handle correctly cursors and single BSON/JS objects, but the handling of arrays was incorrect. </p>
+
+<p>All this mainly because internally MongoDB has no such thing like array. The array of BSON objects is represented and stored as normal BSON object with numerical fields name that are monotonically increasing. </p>
+
+<p>If you try to insert the following BSON document into collection:</p>
+
+<pre><code class="language-json">{
+   numbers: [
+      7,
+      979,
+      36
+   ]
+}
+</code></pre>
+
+<p>It will be actually stored as:</p>
+
+<pre><code>{
+   numbers: {
+      "0": 7,
+      "1": 979,
+      "2": 36
+   }
+}
+</code></pre>
+
+<p>How does MongoDB know that <code>numbers</code> field is actually an array, and not just an object? Besides field name and value there is an additional encoded information &mdash; field type. For upper mentioned field it will be equal to <code>4</code>, what means <code>Array</code> type, according to <a href="http://bsonspec.org/spec.html">BSON specification</a>. </p>
+
+<p>That is why, when you run the following query in Robomongo 0.8.5 and earlier versions, you will get an object, instead of an array:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/01/arrays-incorrect.png" alt="Robomongo 0.9.0 RC3 released"></p>
+
+<p>In Robomongo 0.9.0 RC3 we have fixed this, and array is now represented as JavaScript array:</p>
+
+<p><img src="https://blog.robomongo.org/content/images/2016/01/arrays-correct.png" alt="Robomongo 0.9.0 RC3 released"></p>
+
+<p>The incorrect representation of arrays in previous versions of Robomongo affects only top-level documents. Such documents are always read-only (like result of <code>db.getCollectionNames()</code>). Arrays that are nested inside some other BSON document are always represented correctly in Robomongo. In any way, starting from RC3 all kinds of arrays are displayed correctly.</p>
+
+<p><br></p>
+
+<h2 id="supportrobomongo">Support Robomongo!</h2>
+
+<p>These latest releases are brought to you by Paralect guys who are dreaming to continue the work on Robomongo:</p>
+
+<p><a href="http://robomongo.org"><img src="https://blog.robomongo.org/content/images/2016/01/team.jpg" alt="Robomongo 0.9.0 RC3 released"></a></p>
+
+<p><a href="https://www.indiegogo.com/projects/save-robomongo">Support us</a> in these last 10 days!</p>
+
+<p><br></p>
+
+<h2 id="download">Download</h2>
+
+<ol>
+<li><a href="http://download.robomongo.org/0.9.0-rc3/windows/robomongo-0.9.0-rc3-windows-x86_64-0476204.exe">Robomongo 0.9.0 RC3 for Windows</a> (x86_64).  </li>
+<li><a href="http://download.robomongo.org/0.9.0-rc3/osx/robomongo-0.9.0-rc3-darwin-x86_64-0476204.dmg">Robomongo 0.9.0 RC3 for Mac OS X</a> (x86_64)  </li>
+<li><a href="http://download.robomongo.org/0.9.0-rc3/linux/robomongo-0.9.0-rc3-linux-x86_64-0476204.tar.gz">Robomongo 0.9.0 RC3 for Linux</a> (x86_64)</li>
+</ol>
+
+<p>Enjoy!</p>
+
+<p><a href="http://robomongo.org"><img width="250" src="https://blog.robomongo.org/content/images/2016/01/tears-1.png" alt="Robomongo 0.9.0 RC3 released"></a></p>
+
+<p>Please, submit any found issues to our <a href="https://github.com/paralect/robomongo/issues">GitHub tracker</a>.</p>
+
+<h4 id="knownissues">Known Issues</h4>
+
+<p>List of known limitations of the current version:</p>
+
+<ol>
+<li>Log messages are not printed in Logs panel at the bottom  </li>
+<li>It is not possible to stop long-running JavaScript  </li>
+<li>There is no support for connections via SSH and SSL  </li>
+<li>Replica Sets are not supported</li>
+</ol>]]></content:encoded></item></channel></rss>
